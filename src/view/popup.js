@@ -1,6 +1,7 @@
 import { getReleaseDate, getMovieDuration } from '../utils';
+import { createElement } from '../render.js';
 
-export const createPopupTemplate = (movie) => {
+const createPopupTemplate = (movie) => {
   const {
     comments,
     filmInfo: {
@@ -158,3 +159,28 @@ export const createPopupTemplate = (movie) => {
     </form>
   </section>`;
 };
+
+export default class PopupView {
+  #element = null;
+  #movie = null;
+
+  constructor(movie) {
+    this.#movie = movie;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPopupTemplate(this.#movie);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
