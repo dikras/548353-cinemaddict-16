@@ -1,5 +1,5 @@
 import { getReleaseDate, getMovieDuration } from '../utils';
-import { createElement } from '../render.js';
+import AbstractView from './abstract.js';
 
 const createPopupTemplate = (movie) => {
   const {
@@ -160,27 +160,25 @@ const createPopupTemplate = (movie) => {
   </section>`;
 };
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #movie = null;
 
   constructor(movie) {
+    super();
     this.#movie = movie;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createPopupTemplate(this.#movie);
   }
 
-  removeElement() {
-    this.#element = null;
+  setCloseButtonClickHandler = (callback) => {
+    this._callback.closeButtonClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickClickHandler);
+  }
+
+  #closeButtonClickClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeButtonClick();
   }
 }

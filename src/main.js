@@ -47,7 +47,7 @@ if (movies.length === 0) {
 
   const renderMovieCard = (containerElement, movie) => {
     const movieCardComponent = new MovieCardView(movie);
-    render(containerElement, movieCardComponent.element, RenderPosition.BEFOREEND);
+    render(containerElement, movieCardComponent, RenderPosition.BEFOREEND);
 
     const popupComponent = new PopupView(movie);
 
@@ -60,15 +60,13 @@ if (movies.length === 0) {
       }
     };
 
-    movieCardComponent.element.querySelector('.film-card__link').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    movieCardComponent.setCardClickHandler(() => {
       bodyElement.appendChild(popupComponent.element);
       document.addEventListener('keydown', onEscKeyDown);
       bodyElement.classList.add('hide-overflow');
     });
 
-    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    popupComponent.setCloseButtonClickHandler(() => {
       bodyElement.removeChild(popupComponent.element);
       document.removeEventListener('keydown', onEscKeyDown);
       bodyElement.classList.remove('hide-overflow');
@@ -82,12 +80,11 @@ if (movies.length === 0) {
   if (movies.length > MovieCount.PER_STEP) {
     let renderedMovieCount = MovieCount.PER_STEP;
 
-    render(moviesListElement, new ShowMoreButtonView().element, RenderPosition.BEFOREEND);
+    const showMoreButtonComponent = new ShowMoreButtonView();
 
-    const showMoreButton = moviesListElement.querySelector('.films-list__show-more');
+    render(moviesListElement, showMoreButtonComponent, RenderPosition.BEFOREEND);
 
-    showMoreButton.addEventListener('click', (evt) => {
-      evt.preventDefault();
+    showMoreButtonComponent.setShowMoreButtonClickHandler(() => {
       movies
         .slice(renderedMovieCount, renderedMovieCount + MovieCount.PER_STEP)
         .forEach((movie) => renderMovieCard(moviesListContainerElement, movie));
@@ -95,7 +92,8 @@ if (movies.length === 0) {
       renderedMovieCount += MovieCount.PER_STEP;
 
       if (renderedMovieCount >= movies.length) {
-        showMoreButton.remove();
+        showMoreButtonComponent.element.remove();
+        showMoreButtonComponent.removeElement();
       }
     });
   }

@@ -1,26 +1,12 @@
-import { createElement } from '../render.js';
+import AbstractView from './abstract.js';
 
 const createStatsLinkTemplate = () => (
   `<a href="#stats" class="main-navigation__additional">Stats</a>
   `
 );
 
-export default class StatsLinkView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class StatsLinkView  extends AbstractView {
   get template() {
     return createStatsLinkTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

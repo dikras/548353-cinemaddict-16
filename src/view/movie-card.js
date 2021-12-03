@@ -1,5 +1,5 @@
 import { getReleaseYear, getMovieDuration } from '../utils';
-import { createElement } from '../render.js';
+import AbstractView from './abstract.js';
 
 const MAX_DESCRIPTION_LENGTH = 140;
 
@@ -50,27 +50,25 @@ const createMovieCardTemplate = (movie) => {
   </article>`;
 };
 
-export default class MovieCardView {
-  #element = null;
+export default class MovieCardView extends AbstractView {
   #movie = null;
 
   constructor(movie) {
+    super();
     this.#movie = movie;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createMovieCardTemplate(this.#movie);
   }
 
-  removeElement() {
-    this.#element = null;
+  setCardClickHandler = (callback) => {
+    this._callback.cardClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#cardClickHandler);
+  }
+
+  #cardClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.cardClick();
   }
 }
