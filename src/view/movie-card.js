@@ -1,8 +1,9 @@
 import { getReleaseYear, getMovieDuration } from '../utils';
+import { createElement } from '../render.js';
 
 const MAX_DESCRIPTION_LENGTH = 140;
 
-export const createMovieCardTemplate = (movie) => {
+const createMovieCardTemplate = (movie) => {
   const {
     comments,
     filmInfo: {
@@ -48,3 +49,28 @@ export const createMovieCardTemplate = (movie) => {
     </div>
   </article>`;
 };
+
+export default class MovieCardView {
+  #element = null;
+  #movie = null;
+
+  constructor(movie) {
+    this.#movie = movie;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createMovieCardTemplate(this.#movie);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
