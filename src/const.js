@@ -83,7 +83,7 @@ export const commentDates = ['2019-05-11T16:12:32.554Z', '2018-07-17T16:12:32.55
 export const emotions = ['smile', 'sleeping', 'puke', 'angry'];
 
 export const MovieCount = {
-  MAIN_BLOCK: 0,
+  MAIN_BLOCK: 19,
   PER_STEP: 5,
 };
 
