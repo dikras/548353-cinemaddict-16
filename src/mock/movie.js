@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import {getRandomInteger, getRandomFloat, getRandomArray, generateValue} from '../utils.js';
 import {
   titles,
@@ -20,7 +21,7 @@ const commentsCount = getRandomInteger(CommentsCount.MIN, CommentsCount.MAX);
 const movieComments = Array.from({length: commentsCount}, generateComment);
 
 export const generateMovie = () => ({
-  id: '1',
+  id: nanoid(),
   comments: movieComments,
   filmInfo: {
     title: generateValue(titles),
