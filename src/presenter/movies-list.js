@@ -42,6 +42,10 @@ export default class MoviesListPresenter {
     this.#moviePresenter.get(updatedMovie.id).init(updatedMovie);
   }
 
+  /* #handleSortTypeChange = (sortType) => {
+
+  } */
+
   #renderMovie = (movie) => {
     const moviePresenter = new MoviePresenter(this.#moviesListContainerComponent, this.#handleMovieChange, this.#handleModeChange);
     moviePresenter.init(movie);
