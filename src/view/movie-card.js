@@ -1,4 +1,4 @@
-import { getReleaseYear, getMovieDuration } from '../utils';
+import { getReleaseYear, getMovieDuration } from '../utils/movie.js';
 import AbstractView from './abstract.js';
 
 const MAX_DESCRIPTION_LENGTH = 140;
