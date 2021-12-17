@@ -96,3 +96,8 @@ export const KeyEvent = {
   ESC_IE: 'Esc',
   ESC_ALL_BROWSERS: 'Escape',
 };
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  DETAILS: 'DETAILS',
+};
