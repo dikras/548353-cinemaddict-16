@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
-import { RenderPosition, render, replace, remove } from '../render.js';
+import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode } from '../const.js';
 
 const bodyElement = document.body;
@@ -39,7 +39,7 @@ export default class MoviePresenter {
       return;
     }
 
-    if (this.#movieListContainer.element.contains(prevMovieComponent.element)) {
+    if (this.#movieListContainer.contains(prevMovieComponent.element)) {
       replace(this.#movieComponent, prevMovieComponent);
     }
 

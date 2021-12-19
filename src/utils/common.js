@@ -1,7 +1,3 @@
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
-
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -24,21 +20,6 @@ export const getRandomArray = (array) => {
 export const generateValue = (values) => {
   const randomIndex = getRandomInteger(0, values.length - 1);
   return values[randomIndex];
-};
-
-export const getReleaseYear = (date) => {
-  const releaseYear = dayjs(date).format('YYYY');
-  return releaseYear;
-};
-
-export const getReleaseDate = (date) => {
-  const releaseDate = dayjs(date).format('D MMMM YYYY');
-  return releaseDate;
-};
-
-export const getMovieDuration = (runtime) => {
-  const movieDuration = `${dayjs.duration(runtime, 'minutes').format('H')}h ${dayjs.duration(runtime, 'minutes').format('mm')}m`;
-  return movieDuration;
 };
 
 export const updateItem = (items, update) => {

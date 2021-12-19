@@ -1,4 +1,4 @@
-import {generateValue} from '../utils.js';
+import {generateValue} from '../utils/common.js';
 import {authors, comments, commentDates, emotions} from '../const.js';
 
 export const generateComment = () => ({

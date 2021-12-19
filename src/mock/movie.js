@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import {getRandomInteger, getRandomFloat, getRandomArray, generateValue} from '../utils.js';
+import {getRandomInteger, getRandomFloat, getRandomArray, generateValue} from '../utils/common.js';
 import {
   titles,
   alternativeTitles,

@@ -1,4 +1,4 @@
-import { getReleaseDate, getMovieDuration } from '../utils';
+import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import AbstractView from './abstract.js';
 
 const createPopupTemplate = (movie) => {
