@@ -1,5 +1,5 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
-import AbstractView from './abstract.js';
+import SmarttView from './smart.js';
 
 const createPopupTemplate = (movie) => {
   const {
@@ -160,12 +160,16 @@ const createPopupTemplate = (movie) => {
   </section>`;
 };
 
-export default class PopupView extends AbstractView {
+export default class PopupView extends SmarttView {
   #movie = null;
 
   constructor(movie) {
     super();
     this.#movie = movie;
+  }
+
+  restoreHandlers = () => {
+
   }
 
   get template() {

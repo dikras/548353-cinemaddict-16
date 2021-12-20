@@ -10,11 +10,11 @@ import { sortByDate, sortByRating } from '../utils/movie.js';
 
 export default class MovieListPresenter {
   #movieListContainer = null;
+  #sortComponent = null;
 
   #movieListComponent = new MovieListView();
   #noMoviesComponent = new NoMoviesView();
   #showMoreButtonComponent = new ShowMoreButtonView();
-  #sortComponent = new SortView();
 
   #movieListElement = this.#movieListComponent.element.querySelector('.films-list');
   #movieListContainerElement = this.#movieListComponent.element.querySelector('.films-list__container');
@@ -108,6 +108,7 @@ export default class MovieListPresenter {
     if (this.#movies.length === 0) {
       this.#renderNoMovies();
     } else {
+      this.#sortComponent = new SortView(this.#currentSortType);
       render(this.#movieListComponent, this.#sortComponent, RenderPosition.AFTERBEGIN);
       this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     }
@@ -123,6 +124,7 @@ export default class MovieListPresenter {
     this.#moviePresenter.forEach((presenter) => presenter.destroy());
     this.#moviePresenter.clear();
     this.#renderedMoviesCount = MovieCount.PER_STEP;
+    remove(this.#sortComponent);
     remove(this.#showMoreButtonComponent);
   }
 }
