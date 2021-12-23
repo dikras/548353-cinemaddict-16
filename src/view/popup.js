@@ -182,13 +182,16 @@ export default class PopupView extends SmarttView {
   }
 
   #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickClickHandler);
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
     this.element.querySelectorAll('.film-details__emoji-item').forEach((item) =>
       item.addEventListener('click', this.#emojiClickHandler));
   }
 
   setCloseButtonClickHandler = (callback) => {
     this._callback.closeButtonClick = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickClickHandler);
   }
 
   #closeButtonClickClickHandler = (evt) => {
@@ -198,17 +201,14 @@ export default class PopupView extends SmarttView {
 
   setWatchlistPopupClickHandler = (callback) => {
     this._callback.watchlistClick = callback;
-    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
   }
 
   setAlreadyWatchedPopupClickHandler = (callback) => {
     this._callback.alreadyWatchedClick = callback;
-    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
   }
 
   setFavoritePopupClickHandler = (callback) => {
     this._callback.favoriteClick = callback;
-    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
   }
 
   #watchlistClickHandler = (evt) => {

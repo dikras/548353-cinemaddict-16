@@ -76,6 +76,7 @@ export default class MoviePresenter {
     bodyElement.classList.remove('hide-overflow');
 
     this.#mode = Mode.DEFAULT;
+    this.#popupComponent = null;
   }
 
   resetView = () => {
