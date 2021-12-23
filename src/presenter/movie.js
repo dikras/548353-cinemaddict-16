@@ -71,6 +71,7 @@ export default class MoviePresenter {
   }
 
   #closePopup = () => {
+    remove(this.#popupComponent);
     bodyElement.removeChild(this.#popupComponent.element);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     bodyElement.classList.remove('hide-overflow');
@@ -95,7 +96,7 @@ export default class MoviePresenter {
     }
   }
 
-  #handlePopupControlClick = (movieProperty) => {
+  #handleControlButtonClick = (movieProperty) => {
     this.#changeData(
       Object.assign(
         {},
@@ -111,14 +112,14 @@ export default class MoviePresenter {
   }
 
   #handleWatchlistClick = () => {
-    this.#handlePopupControlClick('watchlist');
+    this.#handleControlButtonClick('watchlist');
   }
 
   #handleAlreadyWatchedClick = () => {
-    this.#handlePopupControlClick('alreadyWatched');
+    this.#handleControlButtonClick('alreadyWatched');
   }
 
   #handleFavoriteClick = () => {
-    this.#handlePopupControlClick('favorite');
+    this.#handleControlButtonClick('favorite');
   }
 }

@@ -1,7 +1,7 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import SmarttView from './smart.js';
 
-const createPopupTemplate = (movie) => {
+const createPopupTemplate = (data) => {
   const {
     comments,
     filmInfo: {
@@ -26,7 +26,8 @@ const createPopupTemplate = (movie) => {
       alreadyWatched,
       favorite
     },
-  } = movie;
+    emotion,
+  } = data;
 
   const MIN_INDEX_IN_GENRES = 1;
 
@@ -126,7 +127,9 @@ const createPopupTemplate = (movie) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label">
+              ${emotion ? `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">` : ''}
+            </div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -161,19 +164,26 @@ const createPopupTemplate = (movie) => {
 };
 
 export default class PopupView extends SmarttView {
-  #movie = null;
+  _emotion = null;
 
   constructor(movie) {
     super();
-    this.#movie = movie;
+    this._data = PopupView.parseMovieToData(movie);
+
+    this.#setInnerHandlers();
   }
 
   restoreHandlers = () => {
-
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createPopupTemplate(this.#movie);
+    return createPopupTemplate(this._data);
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((item) =>
+      item.addEventListener('click', this.#emojiClickHandler));
   }
 
   setCloseButtonClickHandler = (callback) => {
@@ -215,4 +225,26 @@ export default class PopupView extends SmarttView {
     evt.preventDefault();
     this._callback.favoriteClick();
   }
+
+  #emojiClickHandler = (evt) => {
+    evt.preventDefault();
+    const currentPosition = this.element.scrollTop;
+    this.updateData({
+      emotion: evt.target.value,
+    });
+    this.element.scrollTo(0, currentPosition);
+    this.element.querySelector('.film-details__comment-input').placeholder = '';
+  }
+
+  static parseMovieToData = (movie) => ({...movie,
+    emotion: this._emotion,
+  });
+
+  static parseDataToMovie = (data) => {
+    const movie = {...data};
+
+    delete movie.emotion;
+
+    return movie;
+  };
 }
