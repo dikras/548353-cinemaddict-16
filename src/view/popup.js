@@ -1,6 +1,12 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import SmarttView from './smart.js';
 
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+
 const createPopupTemplate = (data) => {
   const {
     comments,
@@ -118,7 +124,7 @@ const createPopupTemplate = (data) => {
                   <p class="film-details__comment-text">${comment.comment}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${comment.author}</span>
-                    <span class="film-details__comment-day">${comment.date}</span>
+                    <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
                     <button class="film-details__comment-delete">Delete</button>
                   </p>
                 </div>
