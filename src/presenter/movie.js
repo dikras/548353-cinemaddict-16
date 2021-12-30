@@ -2,6 +2,7 @@ import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode } from '../const.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const bodyElement = document.body;
 
@@ -98,6 +99,8 @@ export default class MoviePresenter {
 
   #handleControlButtonClick = (movieProperty) => {
     this.#changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this.#movie,
