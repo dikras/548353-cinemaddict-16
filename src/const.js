@@ -95,6 +95,7 @@ export const CommentsCount = {
 export const KeyEvent = {
   ESC_IE: 'Esc',
   ESC_ALL_BROWSERS: 'Escape',
+  ENTER: 'Enter'
 };
 
 export const Mode = {

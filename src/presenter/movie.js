@@ -64,6 +64,7 @@ export default class MoviePresenter {
     this.#popupComponent.setAlreadyWatchedPopupClickHandler(this.#handleAlreadyWatchedClick);
     this.#popupComponent.setFavoritePopupClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setCommentDeleteClickHandler(this.#handleDeleteCommentClick);
+    this.#popupComponent.setKeydownCtrlEnterHandler(this.#handleAddComment);
 
     this.#changeMode();
     this.#mode = Mode.DETAILS;
@@ -135,6 +136,15 @@ export default class MoviePresenter {
   #handleDeleteCommentClick = (comment) => {
     this.#changeData(
       UserAction.DELETE_COMMENT,
+      UpdateType.MINOR,
+      comment,
+      this.#commentsModel
+    );
+  }
+
+  #handleAddComment = (comment) => {
+    this.#changeData(
+      UserAction.ADD_COMMENT,
       UpdateType.MINOR,
       comment,
       this.#commentsModel

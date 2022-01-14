@@ -71,7 +71,11 @@ export default class MovieListPresenter {
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
+        // console.log(update);
         commentsModel.deleteComment(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        commentsModel.addComment(updateType, update);
         break;
     }
   }

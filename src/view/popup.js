@@ -1,6 +1,9 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import SmarttView from './smart.js';
+import { KeyEvent } from '../const.js';
 
+import { nanoid } from 'nanoid';
+import he from 'he';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -121,7 +124,7 @@ const createPopupTemplate = (data) => {
                   <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-smile">
                 </span>
                 <div>
-                  <p class="film-details__comment-text">${comment.comment}</p>
+                  <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${comment.author}</span>
                     <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
@@ -177,7 +180,6 @@ export default class PopupView extends SmarttView {
   constructor(movie, commentsModel) {
     super();
     this._data = PopupView.parseMovieToData(movie);
-    this.#comments = this._data.comments;
     this.#commentsModel = commentsModel;
 
     this.#setInnerHandlers();
@@ -188,6 +190,8 @@ export default class PopupView extends SmarttView {
     this.setWatchlistPopupClickHandler(this._callback.watchlistClick);
     this.setAlreadyWatchedPopupClickHandler(this._callback.alreadyWatchedClick);
     this.setFavoritePopupClickHandler(this._callback.favoriteClick);
+    this.setCommentDeleteClickHandler(this._callback.commentDeleteClick);
+    this.setKeydownCtrlEnterHandler(this._callback.commentAdd);
   }
 
   get template() {
@@ -198,6 +202,7 @@ export default class PopupView extends SmarttView {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickClickHandler);
     this.element.querySelectorAll('.film-details__emoji-item').forEach((item) =>
       item.addEventListener('click', this.#emojiClickHandler));
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
   }
 
   setCloseButtonClickHandler = (callback) => {
@@ -230,6 +235,11 @@ export default class PopupView extends SmarttView {
       item.addEventListener('click', this.#commentDeleteClickHandler));
   }
 
+  setKeydownCtrlEnterHandler(callback) {
+    this._callback.commentAdd = callback;
+    document.addEventListener('keydown', this.#keydownCtrlEnterHandler);
+  }
+
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
@@ -257,6 +267,7 @@ export default class PopupView extends SmarttView {
 
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
+    this.#comments = this.#commentsModel.comments;
     const currentPosition = this.element.scrollTop;
     const indexComment = this.#comments.findIndex((comment) => comment.id === evt.target.dataset.commentId);
     this._callback.commentDeleteClick(this.#comments[indexComment]);
@@ -264,6 +275,31 @@ export default class PopupView extends SmarttView {
       comments: this.#commentsModel.comments,
     });
     this.element.scrollTo(0, currentPosition);
+  }
+
+  #keydownCtrlEnterHandler = (evt) => {
+    const currentPosition = this.element.scrollTop;
+    if (evt.ctrlKey && evt.key === KeyEvent.ENTER) {
+      const userComment = {
+        id: nanoid(),
+        author: 'Dmitry Krasyukov',
+        comment: this.element.querySelector('.film-details__comment-input').value,
+        date: dayjs(),
+        emotion: this._data.emotion,
+      };
+      this._callback.commentAdd(userComment);
+      this.updateData({
+        comments: this.#commentsModel.comments,
+      });
+    }
+    this.element.scrollTo(0, currentPosition);
+  }
+
+  #commentInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      comment: evt.target.value,
+    }, true);
   }
 
   static parseMovieToData = (movie) => ({...movie,
