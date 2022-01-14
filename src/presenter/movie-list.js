@@ -7,11 +7,13 @@ import { MovieCount, SortType, UpdateType, UserAction, FilterType } from '../con
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
+import CommentsModel from '../model/comments.js';
 
 export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
+  #commentsModel = null;
   #noMoviesComponent = null;
 
   #movieListComponent = new MovieListView();
@@ -30,6 +32,7 @@ export default class MovieListPresenter {
     this.#movieListContainer = movieListContainer;
     this.#moviesModel = moviesModel;
     this.#filterModel = filterModel;
+    this.#commentsModel = new CommentsModel();
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -62,9 +65,14 @@ export default class MovieListPresenter {
     this.#moviePresenter.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
-    if (actionType === UserAction.UPDATE_MOVIE) {
-      this.#moviesModel.updateMovie(updateType, update);
+  #handleViewAction = (actionType, updateType, update, commentsModel) => {
+    switch(actionType) {
+      case UserAction.UPDATE_MOVIE:
+        this.#moviesModel.updateMovie(updateType, update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        commentsModel.deleteComment(updateType, update);
+        break;
     }
   }
 

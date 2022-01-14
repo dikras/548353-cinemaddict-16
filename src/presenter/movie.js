@@ -3,6 +3,7 @@ import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode } from '../const.js';
 import { UserAction, UpdateType } from '../const.js';
+import CommentsModel from '../model/comments.js';
 
 const bodyElement = document.body;
 
@@ -18,10 +19,13 @@ export default class MoviePresenter {
   #movie = null;
   #mode = Mode.DEFAULT;
 
+  #commentsModel = null;
+
   constructor(movieListContainer, changeData, changeMode) {
     this.#movieListContainer = movieListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#commentsModel = new CommentsModel();
   }
 
   init = (movie) => {
@@ -29,6 +33,7 @@ export default class MoviePresenter {
 
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
+    this.#commentsModel.comments = this.#movie.comments;
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
@@ -47,8 +52,8 @@ export default class MoviePresenter {
     remove(prevMovieComponent);
   }
 
-  #renderPopup = (movie) => {
-    this.#popupComponent = new PopupView(movie);
+  #renderPopup = (movie, commentsModel) => {
+    this.#popupComponent = new PopupView(movie, commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -58,6 +63,7 @@ export default class MoviePresenter {
     this.#popupComponent.setWatchlistPopupClickHandler(this.#handleWatchlistClick);
     this.#popupComponent.setAlreadyWatchedPopupClickHandler(this.#handleAlreadyWatchedClick);
     this.#popupComponent.setFavoritePopupClickHandler(this.#handleFavoriteClick);
+    this.#popupComponent.setCommentDeleteClickHandler(this.#handleDeleteCommentClick);
 
     this.#changeMode();
     this.#mode = Mode.DETAILS;
@@ -68,7 +74,7 @@ export default class MoviePresenter {
   }
 
   #handleCardClick = () => {
-    this.#renderPopup(this.#movie);
+    this.#renderPopup(this.#movie, this.#commentsModel);
   }
 
   #closePopup = () => {
@@ -124,5 +130,14 @@ export default class MoviePresenter {
 
   #handleFavoriteClick = () => {
     this.#handleControlButtonClick('favorite');
+  }
+
+  #handleDeleteCommentClick = (comment) => {
+    this.#changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.MINOR,
+      comment,
+      this.#commentsModel
+    );
   }
 }

@@ -125,7 +125,7 @@ const createPopupTemplate = (data) => {
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${comment.author}</span>
                     <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
-                    <button class="film-details__comment-delete">Delete</button>
+                    <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
                   </p>
                 </div>
               </li>`
@@ -171,16 +171,23 @@ const createPopupTemplate = (data) => {
 
 export default class PopupView extends SmarttView {
   _emotion = null;
+  #commentsModel;
+  #comments = null;
 
-  constructor(movie) {
+  constructor(movie, commentsModel) {
     super();
     this._data = PopupView.parseMovieToData(movie);
+    this.#comments = this._data.comments;
+    this.#commentsModel = commentsModel;
 
     this.#setInnerHandlers();
   }
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.setWatchlistPopupClickHandler(this._callback.watchlistClick);
+    this.setAlreadyWatchedPopupClickHandler(this._callback.alreadyWatchedClick);
+    this.setFavoritePopupClickHandler(this._callback.favoriteClick);
   }
 
   get template() {
@@ -189,9 +196,6 @@ export default class PopupView extends SmarttView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickClickHandler);
-    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
-    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
-    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
     this.element.querySelectorAll('.film-details__emoji-item').forEach((item) =>
       item.addEventListener('click', this.#emojiClickHandler));
   }
@@ -207,14 +211,23 @@ export default class PopupView extends SmarttView {
 
   setWatchlistPopupClickHandler = (callback) => {
     this._callback.watchlistClick = callback;
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
   }
 
   setAlreadyWatchedPopupClickHandler = (callback) => {
     this._callback.alreadyWatchedClick = callback;
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
   }
 
   setFavoritePopupClickHandler = (callback) => {
     this._callback.favoriteClick = callback;
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
+  }
+
+  setCommentDeleteClickHandler(callback) {
+    this._callback.commentDeleteClick = callback;
+    this.element.querySelectorAll('.film-details__comment-delete').forEach((item) =>
+      item.addEventListener('click', this.#commentDeleteClickHandler));
   }
 
   #watchlistClickHandler = (evt) => {
@@ -240,6 +253,17 @@ export default class PopupView extends SmarttView {
     });
     this.element.scrollTo(0, currentPosition);
     this.element.querySelector('.film-details__comment-input').placeholder = '';
+  }
+
+  #commentDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    const currentPosition = this.element.scrollTop;
+    const indexComment = this.#comments.findIndex((comment) => comment.id === evt.target.dataset.commentId);
+    this._callback.commentDeleteClick(this.#comments[indexComment]);
+    this.updateData({
+      comments: this.#commentsModel.comments,
+    });
+    this.element.scrollTo(0, currentPosition);
   }
 
   static parseMovieToData = (movie) => ({...movie,
