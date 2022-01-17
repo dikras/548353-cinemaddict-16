@@ -33,10 +33,7 @@ export default class FilterView extends AbstractView {
   }
 
   #filterTypeChangeHandler = (evt) => {
-    if (evt.target.tagName !== 'A') {
-      return;
-    }
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.href.split('#')[1]);
+    this._callback.filterTypeChange(evt.target.closest('a').href.split('#')[1]);
   }
 }
