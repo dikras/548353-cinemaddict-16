@@ -1,5 +1,5 @@
 import SmartView from './smart.js';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 
 const createStatisticsTemplate = () => (
