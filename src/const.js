@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const titles = [
   'Gone with the Wind',
   'The Dance of Life',
@@ -80,10 +82,34 @@ export const comments = ['A film that changed my life, a true masterpiece, post-
 
 export const commentDates = ['2019-05-11T16:12:32.554Z', '2018-07-17T16:12:32.554Z', '2020-08-21T16:12:32.554Z', '2021-11-30T16:12:32.554Z'];
 
+export const userCommentDates = ['2022-01-17T16:12:32.554Z', '2022-01-16T16:12:32.554Z', '2022-01-07T16:12:32.554Z', '2021-12-31T16:12:32.554Z'];
+
+export const watchingDates = [
+  dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(20, 'minute').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(2, 'hour').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(5, 'hour').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(1, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(2, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(3, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(4, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(5, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(5, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(10, 'day').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(2, 'week').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(3, 'week').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(4, 'week').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(2, 'month').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(3, 'month').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(4, 'month').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(5, 'month').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  dayjs().subtract(8, 'month').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+];
+
 export const emotions = ['smile', 'sleeping', 'puke', 'angry'];
 
 export const MovieCount = {
-  MAIN_BLOCK: 19,
+  MAIN_BLOCK: 25,
   PER_STEP: 5,
 };
 
@@ -127,4 +153,35 @@ export const FilterType = {
   HISTORY: 'history',
   FAVORITES: 'favorites',
   STATISTICS: 'stats'
+};
+
+export const UserRank = {
+  novice: {
+    rank: 'Novice',
+    from: 1,
+    to: 10,
+  },
+  fan: {
+    rank: 'Fan',
+    from: 11,
+    to: 20,
+  },
+  movieBuff: {
+    rank: 'Movie buff',
+    from: 21,
+    to: Infinity,
+  },
+};
+
+export const DurationType = {
+  HOURS: 'hours',
+  MINUTES: 'minutes',
+};
+
+export const PeriodType = {
+  ALL: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
 };

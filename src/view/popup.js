@@ -1,6 +1,7 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import SmarttView from './smart.js';
-import { KeyEvent } from '../const.js';
+import { KeyEvent, authors, userCommentDates } from '../const.js';
+import { generateValue } from '../utils/common.js';
 
 import { nanoid } from 'nanoid';
 import he from 'he';
@@ -36,6 +37,7 @@ const createPopupTemplate = (data) => {
       favorite
     },
     emotion,
+    userComment
   } = data;
 
   const MIN_INDEX_IN_GENRES = 1;
@@ -141,7 +143,7 @@ const createPopupTemplate = (data) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${userComment}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -174,6 +176,7 @@ const createPopupTemplate = (data) => {
 
 export default class PopupView extends SmarttView {
   _emotion = null;
+  _comment = null;
   #commentsModel;
   #comments = null;
 
@@ -231,8 +234,7 @@ export default class PopupView extends SmarttView {
 
   setCommentDeleteClickHandler(callback) {
     this._callback.commentDeleteClick = callback;
-    this.element.querySelectorAll('.film-details__comment-delete').forEach((item) =>
-      item.addEventListener('click', this.#commentDeleteClickHandler));
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteClickHandler);
   }
 
   setKeydownCtrlEnterHandler(callback) {
@@ -258,11 +260,12 @@ export default class PopupView extends SmarttView {
   #emojiClickHandler = (evt) => {
     evt.preventDefault();
     const currentPosition = this.element.scrollTop;
+    const commentInput = this.element.querySelector('.film-details__comment-input');
     this.updateData({
       emotion: evt.target.value,
+      userComment: commentInput.value
     });
     this.element.scrollTo(0, currentPosition);
-    this.element.querySelector('.film-details__comment-input').placeholder = '';
   }
 
   #commentDeleteClickHandler = (evt) => {
@@ -278,18 +281,21 @@ export default class PopupView extends SmarttView {
   }
 
   #keydownCtrlEnterHandler = (evt) => {
+    this._comment = this.element.querySelector('.film-details__comment-input').value;
     const currentPosition = this.element.scrollTop;
     if (evt.ctrlKey && evt.key === KeyEvent.ENTER) {
       const userComment = {
         id: nanoid(),
-        author: 'Dmitry Krasyukov',
-        comment: this.element.querySelector('.film-details__comment-input').value,
-        date: dayjs(),
+        author: generateValue(authors),
+        comment: this._comment,
+        date: generateValue(userCommentDates),
         emotion: this._data.emotion,
       };
       this._callback.commentAdd(userComment);
       this.updateData({
         comments: this.#commentsModel.comments,
+        emotion: '',
+        userComment: '',
       });
     }
     this.element.scrollTo(0, currentPosition);
@@ -304,6 +310,7 @@ export default class PopupView extends SmarttView {
 
   static parseMovieToData = (movie) => ({...movie,
     emotion: this._emotion,
+    userComment: '',
   });
 
   static parseDataToMovie = (data) => {

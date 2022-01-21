@@ -17,6 +17,6 @@ export default class MainNavigationView extends AbstractView {
 
   #navigationClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.navigationClick(evt.target.closest('a').href.split('#')[1]);
+    this._callback.navigationClick(evt.target.dataset.filterType);
   }
 }

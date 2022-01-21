@@ -24,7 +24,7 @@ const footerElement = document.querySelector('.footer');
 
 const mainNavigationComponent = new MainNavigationView();
 
-render(headerElement, new UserRankView().element, RenderPosition.BEFOREEND);
+render(headerElement, new UserRankView(movies).element, RenderPosition.BEFOREEND);
 render(mainElement, mainNavigationComponent, RenderPosition.BEFOREEND);
 
 const mainNavigationElement = mainElement.querySelector('.main-navigation');
@@ -32,7 +32,7 @@ const filterPresenter = new FilterPresenter(mainNavigationElement, filterModel, 
 filterPresenter.init();
 render(mainNavigationElement, new StatsLinkView().element, RenderPosition.BEFOREEND);
 
-const movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
+let movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
 movieListPresenter.init();
 
 let statisticsComponent = null;
@@ -50,14 +50,15 @@ const handleNavigationClick = (navItem) => {
       }
       statisticsComponent = null;
       if (count === 0) {
+        movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
         movieListPresenter.init();
       }
       count = count + 1;
       break;
     case FilterType.STATISTICS:
       movieListPresenter.destroy();
-      statisticsComponent = new StatisticsView();
-      render(mainElement, new StatisticsView(), RenderPosition.BEFOREEND);
+      statisticsComponent = new StatisticsView(movies);
+      render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
   }
 };

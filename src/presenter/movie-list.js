@@ -58,7 +58,6 @@ export default class MovieListPresenter {
   }
 
   init = () => {
-
     render(this.#movieListContainer, this.#movieListComponent, RenderPosition.BEFOREEND);
     render(this.#movieListElement, this.#movieListContainerElement, RenderPosition.BEFOREEND);
 
@@ -107,6 +106,11 @@ export default class MovieListPresenter {
     this.#clearBoard({resetRenderedMoviesCount: true});
     this.#renderBoard();
   }
+
+  /* #renderUserProfile = () => {
+    const headerElement = document.querySelector('.header');
+    render(headerElement, new UserRankView(this.#moviesModel).element, RenderPosition.BEFOREEND);
+  } */
 
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
