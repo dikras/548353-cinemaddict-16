@@ -1,7 +1,5 @@
 import SmartView from './smart.js';
 import { getUserRank } from '../utils/statistics.js';
-import { filter } from '../utils/filter.js';
-import { FilterType } from '../const.js';
 
 const createUserRankTemplate = (movies) => (
   `<section class="header__profile profile">
@@ -11,14 +9,14 @@ const createUserRankTemplate = (movies) => (
 );
 
 export default class UserRankView extends SmartView {
-  #watchedMovies = null;;
+  #movies = null;
 
   constructor(movies) {
     super();
-    this.#watchedMovies = filter[FilterType.HISTORY](movies);
+    this.#movies = movies;
   }
 
   get template() {
-    return createUserRankTemplate(this.#watchedMovies);
+    return createUserRankTemplate(this.#movies);
   }
 }
