@@ -107,11 +107,6 @@ export default class MovieListPresenter {
     this.#renderBoard();
   }
 
-  /* #renderUserProfile = () => {
-    const headerElement = document.querySelector('.header');
-    render(headerElement, new UserRankView(this.#moviesModel).element, RenderPosition.BEFOREEND);
-  } */
-
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);

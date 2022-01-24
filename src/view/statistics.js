@@ -126,12 +126,14 @@ const createStatisticsTemplate = ({movies, dateFrom, dateTo, target}) => {
 </section>`);
 };
 
-export default class Statistics extends SmartView {
+export default class StatisticsView extends SmartView {
+  #watchedMovies = null;
+
   constructor (movies) {
     super();
-    this._watchedMovies = filter[FilterType.HISTORY](movies);
+    this.#watchedMovies = filter[FilterType.HISTORY](movies);
     this._data = {
-      movies: this._watchedMovies,
+      movies: this.#watchedMovies,
       dateFrom: dayjs().toDate(),
       dateTo: dayjs().toDate(),
       target: PeriodType.ALL,

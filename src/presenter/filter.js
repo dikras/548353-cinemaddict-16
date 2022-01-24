@@ -9,6 +9,7 @@ export default class FilterPresenter {
   #moviesModel = null;
 
   #filterComponent = null;
+  #userRankComponent = null;
 
   constructor(filterContainer, filterModel, moviesModel) {
     this.#filterContainer = filterContainer;
@@ -48,6 +49,7 @@ export default class FilterPresenter {
 
   init = () => {
     const filters = this.filters;
+
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
