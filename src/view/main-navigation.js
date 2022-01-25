@@ -9,4 +9,14 @@ export default class MainNavigationView extends AbstractView {
   get template() {
     return createMainNavigationTemplate();
   }
+
+  setNavigationClickHandler = (callback) => {
+    this._callback.navigationClick = callback;
+    this.element.addEventListener('click', this.#navigationClickHandler);
+  }
+
+  #navigationClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.navigationClick(evt.target.dataset.filterType);
+  }
 }

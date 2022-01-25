@@ -7,13 +7,11 @@ import { MovieCount, SortType, UpdateType, UserAction, FilterType } from '../con
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
-import CommentsModel from '../model/comments.js';
 
 export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
-  #commentsModel = null;
   #noMoviesComponent = null;
 
   #movieListComponent = new MovieListView();
@@ -32,10 +30,6 @@ export default class MovieListPresenter {
     this.#movieListContainer = movieListContainer;
     this.#moviesModel = moviesModel;
     this.#filterModel = filterModel;
-    this.#commentsModel = new CommentsModel();
-
-    this.#moviesModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get movies() {
@@ -53,10 +47,22 @@ export default class MovieListPresenter {
     return filteredMovies;
   }
 
-  init = () => {
+  destroy = () => {
+    this.#clearBoard({resetRenderedMoviesCount: true, resetSortType: true});
 
+    remove(this.#movieListComponent);
+    remove(this.#sortComponent);
+
+    this.#moviesModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
+  }
+
+  init = () => {
     render(this.#movieListContainer, this.#movieListComponent, RenderPosition.BEFOREEND);
     render(this.#movieListElement, this.#movieListContainerElement, RenderPosition.BEFOREEND);
+
+    this.#moviesModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#renderBoard();
   }
@@ -71,7 +77,6 @@ export default class MovieListPresenter {
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        // console.log(update);
         commentsModel.deleteComment(updateType, update);
         break;
       case UserAction.ADD_COMMENT:

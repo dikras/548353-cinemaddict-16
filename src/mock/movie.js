@@ -13,7 +13,8 @@ import {
   runtimes,
   genres,
   descriptions,
-  CommentsCount } from '../const.js';
+  CommentsCount,
+  watchingDates } from '../const.js';
 import {generateComment} from '../mock/comments.js';
 
 const commentsCount = getRandomInteger(CommentsCount.MIN, CommentsCount.MAX);
@@ -43,7 +44,7 @@ export const generateMovie = () => ({
   userDetails: {
     watchlist: Boolean(getRandomInteger(0, 1)),
     alreadyWatched: Boolean(getRandomInteger(0, 1)),
-    watchingDate: '2021-11-30T16:12:32.554Z',
+    watchingDate: generateValue(watchingDates),
     favorite: Boolean(getRandomInteger(0, 1))
   }
 });
