@@ -15,8 +15,6 @@ export default class MoviesModel extends AbstractObservable {
   }
 
   init = async () => {
-    // const movies = await this.#apiService.movies;
-    // this.#movies = movies.map(this.#adaptToClient);
     try {
       const movies = await this.#apiService.movies;
       this.#movies = movies.map(this.#adaptToClient);

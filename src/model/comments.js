@@ -1,7 +1,19 @@
 import AbstractObservable from '../utils/abstract-observable.js';
 
 export default class CommentsModel extends AbstractObservable {
+  #apiService = null;
   #comments = [];
+  #movie = null;
+
+  constructor(apiService, movie) {
+    super();
+    this.#apiService = apiService;
+    this.#movie = movie;
+
+    /* this.#apiService.getComments(movie).then((comments) => {
+      console.log(comments);
+    }); */
+  }
 
   set comments(comments) {
     this.#comments = [...comments];
@@ -9,6 +21,15 @@ export default class CommentsModel extends AbstractObservable {
 
   get comments() {
     return this.#comments;
+  }
+
+  init = async () => {
+    try {
+      const comments = await this.#apiService.getComments(this.#movie);
+      this.#comments = comments;
+    } catch(err) {
+      this.#comments = [];
+    }
   }
 
   addComment = (updateType, update) => {

@@ -3,7 +3,7 @@ import MainNavigationView from './view/main-navigation.js';
 import StatsLinkView from './view/stats-link.js';
 import MoviesCountView from './view/movies-count.js';
 // import { generateMovie } from './mock/movie.js';
-import { FilterType } from './const.js';
+import { FilterType, AUTHORIZATION, END_POINT } from './const.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
 import MoviesModel from './model/movies.js';
@@ -11,9 +11,6 @@ import FilterModel from './model/filter.js';
 import StatisticsView from './view/statistics.js';
 import UserRankPresenter from './presenter/user-rank.js';
 import ApiService from './api-service.js';
-
-const AUTHORIZATION = 'Basic w78NalncokVub9gM';
-const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
 
 // const movies = Array.from({length: MovieCount.MAIN_BLOCK}, generateMovie);
 const headerElement = document.querySelector('.header');
@@ -35,7 +32,7 @@ const filterPresenter = new FilterPresenter(mainNavigationElement, filterModel, 
 filterPresenter.init();
 render(mainNavigationElement, new StatsLinkView().element, RenderPosition.BEFOREEND);
 
-let movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
+const movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
 movieListPresenter.init();
 
 let statisticsComponent = null;
@@ -53,7 +50,6 @@ const handleNavigationClick = (navItem) => {
       }
       statisticsComponent = null;
       if (count === 0) {
-        movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
         movieListPresenter.init();
       }
       count = count + 1;
@@ -66,8 +62,9 @@ const handleNavigationClick = (navItem) => {
   }
 };
 
-mainNavigationComponent.setNavigationClickHandler(handleNavigationClick);
+const moviesCountComponent = new MoviesCountView(moviesModel.movies);
 
-render(footerElement, new MoviesCountView(moviesModel.movies).element, RenderPosition.BEFOREEND);
+mainNavigationComponent.setNavigationClickHandler(handleNavigationClick);
+render(footerElement, moviesCountComponent.element, RenderPosition.BEFOREEND);
 
 moviesModel.init();

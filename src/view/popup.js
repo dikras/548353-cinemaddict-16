@@ -11,9 +11,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const createPopupTemplate = (data) => {
+const createPopupTemplate = (data, comments) => {
   const {
-    comments,
     filmInfo: {
       title,
       alternativeTitle,
@@ -184,6 +183,7 @@ export default class PopupView extends SmarttView {
     super();
     this._data = PopupView.parseMovieToData(movie);
     this.#commentsModel = commentsModel;
+    this.#comments = this.#commentsModel.comments;
 
     this.#setInnerHandlers();
   }
@@ -198,7 +198,7 @@ export default class PopupView extends SmarttView {
   }
 
   get template() {
-    return createPopupTemplate(this._data);
+    return createPopupTemplate(this._data, this.#comments);
   }
 
   #setInnerHandlers = () => {

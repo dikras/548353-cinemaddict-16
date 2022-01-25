@@ -2,8 +2,9 @@ import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode } from '../const.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, AUTHORIZATION, END_POINT } from '../const.js';
 import CommentsModel from '../model/comments.js';
+import ApiService from '../api-service.js';
 
 const bodyElement = document.body;
 
@@ -25,7 +26,6 @@ export default class MoviePresenter {
     this.#movieListContainer = movieListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    this.#commentsModel = new CommentsModel();
   }
 
   init = (movie) => {
@@ -33,12 +33,13 @@ export default class MoviePresenter {
 
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
-    this.#commentsModel.comments = this.#movie.comments;
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#movieComponent.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#movieComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+
+    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
 
     if (prevMovieComponent === null) {
       render(this.#movieListContainer, this.#movieComponent, RenderPosition.BEFOREEND);
@@ -52,8 +53,9 @@ export default class MoviePresenter {
     remove(prevMovieComponent);
   }
 
-  #renderPopup = (movie, commentsModel) => {
-    this.#popupComponent = new PopupView(movie, commentsModel);
+  #renderPopup = (movie) => {
+    this.#commentsModel.init();
+    this.#popupComponent = new PopupView(movie, this.#commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);

@@ -186,3 +186,6 @@ export const PeriodType = {
   MONTH: 'month',
   YEAR: 'year',
 };
+
+export const AUTHORIZATION = 'Basic w78NalncokVub9gM';
+export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
