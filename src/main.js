@@ -1,34 +1,33 @@
 import { RenderPosition, render, remove } from './utils/render.js';
-// import UserRankView from './view/user-rank.js';
 import MainNavigationView from './view/main-navigation.js';
 import StatsLinkView from './view/stats-link.js';
 import MoviesCountView from './view/movies-count.js';
-import { generateMovie } from './mock/movie.js';
-import { MovieCount, FilterType } from './const.js';
+// import { generateMovie } from './mock/movie.js';
+import { FilterType } from './const.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
 import MoviesModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import StatisticsView from './view/statistics.js';
 import UserRankPresenter from './presenter/user-rank.js';
+import ApiService from './api-service.js';
 
-const movies = Array.from({length: MovieCount.MAIN_BLOCK}, generateMovie);
+const AUTHORIZATION = 'Basic w78NalncokVub9gM';
+const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
 
-const moviesModel = new MoviesModel();
-moviesModel.movies = movies;
-
-const filterModel = new FilterModel();
-
+// const movies = Array.from({length: MovieCount.MAIN_BLOCK}, generateMovie);
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
 const footerElement = document.querySelector('.footer');
 
+const moviesModel = new MoviesModel(new ApiService(END_POINT, AUTHORIZATION));
+
+const filterModel = new FilterModel();
+
 const mainNavigationComponent = new MainNavigationView();
-// let userRankComponent = new UserRankView(movies);
 const userRankPresenter = new UserRankPresenter(headerElement, moviesModel);
 userRankPresenter.init();
 
-// render(headerElement, userRankComponent.element, RenderPosition.BEFOREEND);
 render(mainElement, mainNavigationComponent, RenderPosition.BEFOREEND);
 
 const mainNavigationElement = mainElement.querySelector('.main-navigation');
@@ -61,7 +60,7 @@ const handleNavigationClick = (navItem) => {
       break;
     case FilterType.STATISTICS:
       movieListPresenter.destroy();
-      statisticsComponent = new StatisticsView(movies);
+      statisticsComponent = new StatisticsView(moviesModel.movies);
       render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
   }
@@ -69,4 +68,6 @@ const handleNavigationClick = (navItem) => {
 
 mainNavigationComponent.setNavigationClickHandler(handleNavigationClick);
 
-render(footerElement, new MoviesCountView(movies).element, RenderPosition.BEFOREEND);
+render(footerElement, new MoviesCountView(moviesModel.movies).element, RenderPosition.BEFOREEND);
+
+moviesModel.init();

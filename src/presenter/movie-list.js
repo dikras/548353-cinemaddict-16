@@ -7,6 +7,7 @@ import { MovieCount, SortType, UpdateType, UserAction, FilterType } from '../con
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
+import LoadingView from '../view/loading.js';
 
 export default class MovieListPresenter {
   #movieListContainer = null;
@@ -15,6 +16,7 @@ export default class MovieListPresenter {
   #noMoviesComponent = null;
 
   #movieListComponent = new MovieListView();
+  #loadingComponent = new LoadingView();
   #sortComponent = null;
   #showMoreButtonComponent = null;
 
@@ -25,6 +27,7 @@ export default class MovieListPresenter {
   #moviePresenter = new Map();
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
   constructor(movieListContainer, moviesModel, filterModel) {
     this.#movieListContainer = movieListContainer;
@@ -94,6 +97,11 @@ export default class MovieListPresenter {
         this.#clearBoard({resetRenderedMoviesCount: true, resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   }
 
@@ -122,6 +130,10 @@ export default class MovieListPresenter {
 
   #renderMovies = (movies) => {
     movies.forEach((movie) => this.#renderMovie(movie));
+  }
+
+  #renderLoading = () => {
+    render(this.#movieListElement, this.#loadingComponent, RenderPosition.BEFOREEND);
   }
 
   #renderNoMovies = () => {
@@ -156,6 +168,7 @@ export default class MovieListPresenter {
     this.#moviePresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
     remove(this.#noMoviesComponent);
     remove(this.#showMoreButtonComponent);
 
@@ -175,6 +188,11 @@ export default class MovieListPresenter {
   }
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const movies = this.movies;
     const moviesCount = movies.length;
 
