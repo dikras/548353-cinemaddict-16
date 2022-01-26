@@ -1,8 +1,8 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
-import { Mode } from '../const.js';
-import { UserAction, UpdateType, AUTHORIZATION, END_POINT } from '../const.js';
+import { Mode, AUTHORIZATION, END_POINT } from '../const.js';
+import { UserAction, UpdateType } from '../const.js';
 import CommentsModel from '../model/comments.js';
 import ApiService from '../api-service.js';
 
@@ -33,13 +33,12 @@ export default class MoviePresenter {
 
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
+    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#movieComponent.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#movieComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-
-    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
 
     if (prevMovieComponent === null) {
       render(this.#movieListContainer, this.#movieComponent, RenderPosition.BEFOREEND);
@@ -53,8 +52,8 @@ export default class MoviePresenter {
     remove(prevMovieComponent);
   }
 
-  #renderPopup = (movie) => {
-    this.#commentsModel.init();
+  #renderPopup = async (movie) => {
+    await this.#commentsModel.init();
     this.#popupComponent = new PopupView(movie, this.#commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
@@ -116,10 +115,10 @@ export default class MoviePresenter {
         this.#movie.userDetails[movieProperty] = !this.#movie.userDetails[movieProperty],
       ));
     if (this.#popupComponent) {
-      const currentPosition = this.#popupComponent.element.scrollTop;
+      // const currentPosition = this.#popupComponent.element.scrollTop;
       this.#closePopup();
       this.#renderPopup(this.#movie);
-      this.#popupComponent.element.scrollTo(0, currentPosition);
+      // this.#popupComponent.element.scrollTo(0, currentPosition);
     }
   }
 

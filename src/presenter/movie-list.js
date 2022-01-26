@@ -9,20 +9,23 @@ import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading.js';
+import MoviesCountView from '../view/movies-count.js';
 
 export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
+  #commentsModel = null;
   #noMoviesComponent = null;
+  #moviesCountComponent = null;
+  #movieListComponent = null;
+  #movieListElement = null;
 
-  #movieListComponent = new MovieListView();
   #movieListContainerComponent = new MovieListContainerView();
   #loadingComponent = new LoadingView();
   #sortComponent = null;
   #showMoreButtonComponent = null;
 
-  #movieListElement = this.#movieListComponent.element;
   #movieListContainerElement = this.#movieListContainerComponent.element;
 
   #renderedMoviesCount = MovieCount.PER_STEP;
@@ -62,6 +65,8 @@ export default class MovieListPresenter {
   }
 
   init = () => {
+    this.#movieListComponent = new MovieListView();
+    this.#movieListElement = this.#movieListComponent.element;
     this.#moviesModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
@@ -99,6 +104,7 @@ export default class MovieListPresenter {
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
+        this.#renderMoviesCount();
         break;
     }
   }
@@ -129,7 +135,7 @@ export default class MovieListPresenter {
   }
 
   #renderMovie = (movie) => {
-    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange);
+    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange, this.#commentsModel);
     moviePresenter.init(movie);
     this.#moviePresenter.set(movie.id, moviePresenter);
   }
@@ -165,6 +171,12 @@ export default class MovieListPresenter {
     this.#showMoreButtonComponent.setShowMoreButtonClickHandler(this.#handleShowMoreButtonClick);
 
     render(this.#movieListComponent.element, this.#showMoreButtonComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderMoviesCount = () => {
+    this.#moviesCountComponent = new MoviesCountView(this.#moviesModel.movies);
+    const footerElement = document.querySelector('.footer');
+    render(footerElement, this.#moviesCountComponent.element, RenderPosition.BEFOREEND);
   }
 
   #clearBoard = ({resetRenderedMoviesCount = false, resetSortType = false} = {}) => {

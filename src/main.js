@@ -1,8 +1,6 @@
 import { RenderPosition, render, remove } from './utils/render.js';
 import MainNavigationView from './view/main-navigation.js';
 import StatsLinkView from './view/stats-link.js';
-import MoviesCountView from './view/movies-count.js';
-// import { generateMovie } from './mock/movie.js';
 import { FilterType, AUTHORIZATION, END_POINT } from './const.js';
 import MovieListPresenter from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
@@ -12,10 +10,8 @@ import StatisticsView from './view/statistics.js';
 import UserRankPresenter from './presenter/user-rank.js';
 import ApiService from './api-service.js';
 
-// const movies = Array.from({length: MovieCount.MAIN_BLOCK}, generateMovie);
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');
-const footerElement = document.querySelector('.footer');
 
 const moviesModel = new MoviesModel(new ApiService(END_POINT, AUTHORIZATION));
 
@@ -30,7 +26,10 @@ render(mainElement, mainNavigationComponent, RenderPosition.BEFOREEND);
 const mainNavigationElement = mainElement.querySelector('.main-navigation');
 const filterPresenter = new FilterPresenter(mainNavigationElement, filterModel, moviesModel);
 filterPresenter.init();
-render(mainNavigationElement, new StatsLinkView().element, RenderPosition.BEFOREEND);
+const filterElements = filterPresenter.filterComponent.element.querySelectorAll('.main-navigation__item');
+
+const statsLinkComponent = new StatsLinkView();
+render(mainNavigationElement, statsLinkComponent.element, RenderPosition.BEFOREEND);
 
 const movieListPresenter = new MovieListPresenter(mainElement, moviesModel, filterModel);
 movieListPresenter.init();
@@ -38,33 +37,34 @@ movieListPresenter.init();
 let statisticsComponent = null;
 
 const handleNavigationClick = (navItem) => {
-  let count;
   switch (navItem) {
     case FilterType.ALL:
     case FilterType.WATCHLIST:
     case FilterType.HISTORY:
     case FilterType.FAVORITES:
+      statsLinkComponent.element.classList.remove('main-navigation__item--active');
       if (statisticsComponent !== null ) {
-        count = 0;
         remove(statisticsComponent);
-      }
-      statisticsComponent = null;
-      if (count === 0) {
         movieListPresenter.init();
       }
-      count = count + 1;
+      statisticsComponent = null;
       break;
     case FilterType.STATISTICS:
+      filterElements.forEach((element) => {
+        if (element.classList.contains('main-navigation__item--active')) {
+          element.classList.remove('main-navigation__item--active');
+        }
+      });
+      statsLinkComponent.element.classList.add('main-navigation__item--active');
       movieListPresenter.destroy();
-      statisticsComponent = new StatisticsView(moviesModel.movies);
-      render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
+      if (!statisticsComponent) {
+        statisticsComponent = new StatisticsView(moviesModel.movies);
+        render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
+      }
       break;
   }
 };
 
-const moviesCountComponent = new MoviesCountView(moviesModel.movies);
-
 mainNavigationComponent.setNavigationClickHandler(handleNavigationClick);
-render(footerElement, moviesCountComponent.element, RenderPosition.BEFOREEND);
 
 moviesModel.init();

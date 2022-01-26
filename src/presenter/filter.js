@@ -9,7 +9,6 @@ export default class FilterPresenter {
   #moviesModel = null;
 
   #filterComponent = null;
-  #userRankComponent = null;
 
   constructor(filterContainer, filterModel, moviesModel) {
     this.#filterContainer = filterContainer;
@@ -45,6 +44,10 @@ export default class FilterPresenter {
         count: filter[FilterType.FAVORITES](movies).length,
       },
     ];
+  }
+
+  get filterComponent() {
+    return this.#filterComponent;
   }
 
   init = () => {

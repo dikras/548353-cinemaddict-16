@@ -9,10 +9,6 @@ export default class CommentsModel extends AbstractObservable {
     super();
     this.#apiService = apiService;
     this.#movie = movie;
-
-    /* this.#apiService.getComments(movie).then((comments) => {
-      console.log(comments);
-    }); */
   }
 
   set comments(comments) {
