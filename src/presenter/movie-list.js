@@ -15,7 +15,6 @@ export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
-  #commentsModel = null;
   #noMoviesComponent = null;
   #moviesCountComponent = null;
   #movieListComponent = null;
@@ -77,16 +76,24 @@ export default class MovieListPresenter {
     this.#moviePresenter.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update, commentsModel) => {
+  #handleViewAction = async (actionType, updateType, update, movie, commentsModel) => {
     switch(actionType) {
       case UserAction.UPDATE_MOVIE:
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        commentsModel.deleteComment(updateType, update);
+        try {
+          await commentsModel.deleteComment(updateType, update);
+        } catch(err) {
+          throw new Error('Can\'t delete comment');
+        }
         break;
       case UserAction.ADD_COMMENT:
-        commentsModel.addComment(updateType, update);
+        try {
+          await commentsModel.addComment(updateType, update, movie);
+        } catch(err) {
+          throw new Error('Can\'t add comment');
+        }
         break;
     }
   }
@@ -135,7 +142,7 @@ export default class MovieListPresenter {
   }
 
   #renderMovie = (movie) => {
-    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange, this.#commentsModel);
+    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange);
     moviePresenter.init(movie);
     this.#moviePresenter.set(movie.id, moviePresenter);
   }

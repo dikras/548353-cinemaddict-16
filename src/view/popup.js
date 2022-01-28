@@ -1,9 +1,7 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
 import SmarttView from './smart.js';
-import { KeyEvent, authors, userCommentDates } from '../const.js';
-import { generateValue } from '../utils/common.js';
+import { KeyEvent } from '../const.js';
 
-import { nanoid } from 'nanoid';
 import he from 'he';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -270,7 +268,6 @@ export default class PopupView extends SmarttView {
 
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this.#comments = this.#commentsModel.comments;
     const currentPosition = this.element.scrollTop;
     const indexComment = this.#comments.findIndex((comment) => comment.id === evt.target.dataset.commentId);
     this._callback.commentDeleteClick(this.#comments[indexComment]);
@@ -285,10 +282,7 @@ export default class PopupView extends SmarttView {
     const currentPosition = this.element.scrollTop;
     if (evt.ctrlKey && evt.key === KeyEvent.ENTER) {
       const userComment = {
-        id: nanoid(),
-        author: generateValue(authors),
         comment: this._comment,
-        date: generateValue(userCommentDates),
         emotion: this._data.emotion,
       };
       this._callback.commentAdd(userComment);

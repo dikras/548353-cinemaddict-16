@@ -28,7 +28,7 @@ export default class MoviePresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (movie) => {
+  init = async (movie) => {
     this.#movie = movie;
 
     const prevMovieComponent = this.#movieComponent;
@@ -50,11 +50,19 @@ export default class MoviePresenter {
     }
 
     remove(prevMovieComponent);
+
+    if (this.#popupComponent) {
+      const currentPosition = this.#popupComponent.element.scrollTop;
+      remove(this.#popupComponent);
+      render(bodyElement, this.#popupComponent, RenderPosition.BEFOREEND);
+      this.#popupComponent.element.scrollTo(0, currentPosition);
+      this.#popupComponent.restoreHandlers();
+    }
   }
 
-  #renderPopup = async (movie) => {
+  #renderPopup = async (movie, commentsModel) => {
     await this.#commentsModel.init();
-    this.#popupComponent = new PopupView(movie, this.#commentsModel);
+    this.#popupComponent = new PopupView(movie, commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -114,12 +122,6 @@ export default class MoviePresenter {
         this.#movie,
         this.#movie.userDetails[movieProperty] = !this.#movie.userDetails[movieProperty],
       ));
-    if (this.#popupComponent) {
-      // const currentPosition = this.#popupComponent.element.scrollTop;
-      this.#closePopup();
-      this.#renderPopup(this.#movie);
-      // this.#popupComponent.element.scrollTo(0, currentPosition);
-    }
   }
 
   #handleWatchlistClick = () => {
@@ -139,6 +141,7 @@ export default class MoviePresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MINOR,
       comment,
+      '',
       this.#commentsModel
     );
   }
@@ -148,6 +151,7 @@ export default class MoviePresenter {
       UserAction.ADD_COMMENT,
       UpdateType.MINOR,
       comment,
+      this.#movie,
       this.#commentsModel
     );
   }
