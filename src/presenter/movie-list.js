@@ -82,6 +82,7 @@ export default class MovieListPresenter {
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
+        // this.#moviePresenter.setViewState(PopupViewState.DELETING);
         try {
           await commentsModel.deleteComment(updateType, update);
         } catch(err) {
@@ -89,6 +90,7 @@ export default class MovieListPresenter {
         }
         break;
       case UserAction.ADD_COMMENT:
+        // this.#moviePresenter.setViewState(PopupViewState.SAVING);
         try {
           await commentsModel.addComment(updateType, update, movie);
         } catch(err) {

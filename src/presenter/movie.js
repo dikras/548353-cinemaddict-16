@@ -2,7 +2,7 @@ import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode, AUTHORIZATION, END_POINT } from '../const.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, PopupViewState } from '../const.js';
 import CommentsModel from '../model/comments.js';
 import ApiService from '../api-service.js';
 
@@ -154,5 +154,25 @@ export default class MoviePresenter {
       this.#movie,
       this.#commentsModel
     );
+  }
+
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case PopupViewState.SAVING:
+        this.#popupComponent.updateData({
+          isDisabled: true
+        });
+        break;
+      case PopupViewState.DELETING:
+        this.#popupComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+    }
   }
 }

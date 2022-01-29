@@ -82,3 +82,8 @@ export const PeriodType = {
 
 export const AUTHORIZATION = 'Basic w78NalncokVub9gM';
 export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
+
+export const PopupViewState = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+};
