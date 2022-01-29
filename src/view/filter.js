@@ -1,4 +1,5 @@
 import AbstractView from './abstract.js';
+import { FilterType } from '../const.js';
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const { type, name, count } = filter;
@@ -8,9 +9,12 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
 const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems.map((filterItem) => createFilterItemTemplate(filterItem, currentFilterType)).join('');
-  return `<div class="main-navigation__items">
-    ${filterItemsTemplate}
-  </div>`;
+  return `<nav class="main-navigation">
+            <div class="main-navigation__items">
+              ${filterItemsTemplate}
+            </div>
+            <a href="#stats" class="main-navigation__additional ${currentFilterType === FilterType.STATISTICS ? 'main-navigation__item--active' : ''}" data-filter-type="${FilterType.STATISTICS}">Stats</a>
+          </nav>`;
 };
 
 export default class FilterView extends AbstractView {
@@ -29,7 +33,8 @@ export default class FilterView extends AbstractView {
 
   setFilterTypeChangeHandler = (callback) => {
     this._callback.filterTypeChange = callback;
-    this.element.addEventListener('click', this.#filterTypeChangeHandler);
+    const filterElements = this.element.querySelector('.main-navigation__items');
+    filterElements.addEventListener('click', this.#filterTypeChangeHandler);
   }
 
   #filterTypeChangeHandler = (evt) => {
@@ -38,5 +43,18 @@ export default class FilterView extends AbstractView {
     }
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.dataset.filterType);
+  }
+
+  setNavigationClickHandler = (callback) => {
+    this._callback.navigationClick = callback;
+    this.element.addEventListener('click', this.#navigationClickHandler);
+  }
+
+  #navigationClickHandler = (evt) => {
+    if (evt.target.tagName !== 'A') {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.navigationClick(evt.target.dataset.filterType);
   }
 }

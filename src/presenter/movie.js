@@ -1,9 +1,10 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
-import { Mode } from '../const.js';
-import { UserAction, UpdateType } from '../const.js';
+import { Mode, AUTHORIZATION, END_POINT } from '../const.js';
+import { UserAction, UpdateType, PopupViewState } from '../const.js';
 import CommentsModel from '../model/comments.js';
+import ApiService from '../api-service.js';
 
 const bodyElement = document.body;
 
@@ -25,15 +26,14 @@ export default class MoviePresenter {
     this.#movieListContainer = movieListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    this.#commentsModel = new CommentsModel();
   }
 
-  init = (movie) => {
+  init = async (movie) => {
     this.#movie = movie;
 
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
-    this.#commentsModel.comments = this.#movie.comments;
+    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
@@ -50,9 +50,18 @@ export default class MoviePresenter {
     }
 
     remove(prevMovieComponent);
+
+    if (this.#popupComponent) {
+      const currentPosition = this.#popupComponent.element.scrollTop;
+      remove(this.#popupComponent);
+      render(bodyElement, this.#popupComponent, RenderPosition.BEFOREEND);
+      this.#popupComponent.element.scrollTo(0, currentPosition);
+      this.#popupComponent.restoreHandlers();
+    }
   }
 
-  #renderPopup = (movie, commentsModel) => {
+  #renderPopup = async (movie, commentsModel) => {
+    await this.#commentsModel.init();
     this.#popupComponent = new PopupView(movie, commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
@@ -113,12 +122,6 @@ export default class MoviePresenter {
         this.#movie,
         this.#movie.userDetails[movieProperty] = !this.#movie.userDetails[movieProperty],
       ));
-    if (this.#popupComponent) {
-      const currentPosition = this.#popupComponent.element.scrollTop;
-      this.#closePopup();
-      this.#renderPopup(this.#movie);
-      this.#popupComponent.element.scrollTo(0, currentPosition);
-    }
   }
 
   #handleWatchlistClick = () => {
@@ -138,6 +141,7 @@ export default class MoviePresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MINOR,
       comment,
+      '',
       this.#commentsModel
     );
   }
@@ -147,7 +151,28 @@ export default class MoviePresenter {
       UserAction.ADD_COMMENT,
       UpdateType.MINOR,
       comment,
+      this.#movie,
       this.#commentsModel
     );
+  }
+
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case PopupViewState.SAVING:
+        this.#popupComponent.updateData({
+          isDisabled: true
+        });
+        break;
+      case PopupViewState.DELETING:
+        this.#popupComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+    }
   }
 }
