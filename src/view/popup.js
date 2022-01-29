@@ -9,7 +9,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const createPopupTemplate = (data, comments) => {
+const createPopupTemplate = (data) => {
   const {
     filmInfo: {
       title,
@@ -33,9 +33,11 @@ const createPopupTemplate = (data, comments) => {
       alreadyWatched,
       favorite
     },
-    emotion,
-    userComment
-  } = data;
+  } = data.film;
+
+  const { comments } = data;
+
+  const { emotion, userComment } = data.newComment;
 
   const MIN_INDEX_IN_GENRES = 1;
 
@@ -172,16 +174,26 @@ const createPopupTemplate = (data, comments) => {
 };
 
 export default class PopupView extends SmarttView {
-  _emotion = null;
-  _comment = null;
   #commentsModel;
   #comments = null;
 
   constructor(movie, commentsModel) {
     super();
-    this._data = PopupView.parseMovieToData(movie);
     this.#commentsModel = commentsModel;
-    this.#comments = this.#commentsModel.comments;
+    this._data = {
+      film: movie,
+      comments: this.#commentsModel.comments,
+      newComment: {
+        emotion: '',
+        userComment: ''
+      }
+    };
+    this.#commentsModel.addObserver(() => {
+      this.updateData({
+        comments: this.#commentsModel.comments,
+      });
+    });
+    this.#comments = this._data.comments;
 
     this.#setInnerHandlers();
   }
@@ -196,7 +208,7 @@ export default class PopupView extends SmarttView {
   }
 
   get template() {
-    return createPopupTemplate(this._data, this.#comments);
+    return createPopupTemplate(this._data);
   }
 
   #setInnerHandlers = () => {
@@ -232,7 +244,8 @@ export default class PopupView extends SmarttView {
 
   setCommentDeleteClickHandler(callback) {
     this._callback.commentDeleteClick = callback;
-    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteClickHandler);
+    const deleteButtons = this.element.querySelectorAll('.film-details__comment-delete');
+    deleteButtons.forEach((btn) => btn.addEventListener('click', this.#commentDeleteClickHandler));
   }
 
   setKeydownCtrlEnterHandler(callback) {
@@ -260,8 +273,10 @@ export default class PopupView extends SmarttView {
     const currentPosition = this.element.scrollTop;
     const commentInput = this.element.querySelector('.film-details__comment-input');
     this.updateData({
-      emotion: evt.target.value,
-      userComment: commentInput.value
+      newComment: {
+        emotion: evt.target.value,
+        userComment: commentInput.value
+      }
     });
     this.element.scrollTo(0, currentPosition);
   }
@@ -272,7 +287,7 @@ export default class PopupView extends SmarttView {
     const indexComment = this.#comments.findIndex((comment) => comment.id === evt.target.dataset.commentId);
     this._callback.commentDeleteClick(this.#comments[indexComment]);
     this.updateData({
-      comments: this.#commentsModel.comments,
+      comments: this._data.comments,
     });
     this.element.scrollTo(0, currentPosition);
   }
@@ -283,13 +298,15 @@ export default class PopupView extends SmarttView {
     if (evt.ctrlKey && evt.key === KeyEvent.ENTER) {
       const userComment = {
         comment: this._comment,
-        emotion: this._data.emotion,
+        emotion: this._data.newComment.emotion,
       };
       this._callback.commentAdd(userComment);
       this.updateData({
         comments: this.#commentsModel.comments,
-        emotion: '',
-        userComment: '',
+        newComment: {
+          emotion: '',
+          userComment: '',
+        }
       });
     }
     this.element.scrollTo(0, currentPosition);
@@ -298,20 +315,10 @@ export default class PopupView extends SmarttView {
   #commentInputHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
-      comment: evt.target.value,
+      newComment: {
+        comment: evt.target.value,
+        emotion: this._data.newComment.emotion
+      }
     }, true);
   }
-
-  static parseMovieToData = (movie) => ({...movie,
-    emotion: this._emotion,
-    userComment: '',
-  });
-
-  static parseDataToMovie = (data) => {
-    const movie = {...data};
-
-    delete movie.emotion;
-
-    return movie;
-  };
 }
