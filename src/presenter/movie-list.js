@@ -4,7 +4,7 @@ import NoMoviesView from '../view/no-movies.js';
 import SortView from '../view/sort.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import MoviePresenter from './movie.js';
-import { MovieCount, SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { MovieCount, SortType, UpdateType, UserAction, FilterType, PopupViewState } from '../const.js';
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
@@ -82,20 +82,22 @@ export default class MovieListPresenter {
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        // this.#moviePresenter.setViewState(PopupViewState.DELETING);
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.DELETING);
         try {
           await commentsModel.deleteComment(updateType, update);
         } catch(err) {
-          throw new Error('Can\'t delete comment');
+          this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_DELETE);
         }
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.DEFAULT);
         break;
       case UserAction.ADD_COMMENT:
-        // this.#moviePresenter.setViewState(PopupViewState.SAVING);
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.SAVING);
         try {
           await commentsModel.addComment(updateType, update, movie);
         } catch(err) {
-          throw new Error('Can\'t add comment');
+          this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_SAVE);
         }
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.DEFAULT);
         break;
     }
   }

@@ -141,7 +141,7 @@ export default class MoviePresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MINOR,
       comment,
-      '',
+      this.#movie,
       this.#commentsModel
     );
   }
@@ -156,12 +156,26 @@ export default class MoviePresenter {
     );
   }
 
+  #removeDisabledState = () => {
+    this.#popupComponent.updateData({
+      isDisabled: false,
+    });
+  }
+
   setViewState = (state) => {
     if (this.#mode === Mode.DEFAULT) {
       return;
     }
 
+    const currentPosition = this.#popupComponent.element.scrollTop;
+
     switch (state) {
+      case PopupViewState.DEFAULT:
+        this.#popupComponent.updateData({
+          isDeleting: false,
+          isDisabled: false,
+        });
+        break;
       case PopupViewState.SAVING:
         this.#popupComponent.updateData({
           isDisabled: true
@@ -173,6 +187,14 @@ export default class MoviePresenter {
           isDeleting: true,
         });
         break;
+      case PopupViewState.ABORTING_SAVE:
+        this.#popupComponent.shakeCommentInput(this.#removeDisabledState);
+        break;
+      case PopupViewState.ABORTING_DELETE:
+        this.#popupComponent.shakeCommentBlock(this.#removeDisabledState);
+        break;
     }
+
+    this.#popupComponent.element.scrollTo(0, currentPosition);
   }
 }
