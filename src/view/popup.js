@@ -39,7 +39,7 @@ const createPopupTemplate = (data, commentId) => {
 
   const { comments, isDisabled, isDeleting } = data;
 
-  const { emotion } = data.newComment;
+  const { emotion, userComment } = data.newComment;
 
   const MIN_INDEX_IN_GENRES = 1;
 
@@ -148,7 +148,7 @@ const createPopupTemplate = (data, commentId) => {
                 class="film-details__comment-input"
                 placeholder="Select reaction below and write comment here"
                 name="comment"
-                ${isDisabled ? 'disabled' : ''}></textarea>
+                ${isDisabled ? 'disabled' : ''}>${userComment ? userComment : ''}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -310,7 +310,11 @@ export default class PopupView extends SmarttView {
         comment: this._comment,
         emotion: this._data.newComment.emotion,
       };
-      this._callback.commentAdd(userComment);
+      if (userComment.comment && userComment.emotion) {
+        this._callback.commentAdd(userComment);
+      } else {
+        this.shakeCommentInput();
+      }
     }
   }
 
@@ -327,10 +331,12 @@ export default class PopupView extends SmarttView {
   shakeCommentInput = (callback) => {
     const commentInputElement = this.element.querySelector('.film-details__comment-input');
     commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    setTimeout(() => {
-      this.element.style.animation = '';
-      callback();
-    }, SHAKE_ANIMATION_TIMEOUT);
+    if (callback) {
+      setTimeout(() => {
+        this.element.style.animation = '';
+        callback();
+      }, SHAKE_ANIMATION_TIMEOUT);
+    }
   }
 
   shakeCommentBlock = (callback) => {

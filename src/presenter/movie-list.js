@@ -88,7 +88,6 @@ export default class MovieListPresenter {
         } catch(err) {
           this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_DELETE);
         }
-        this.#moviesModel.updateMovie(updateType, movie);
         break;
       case UserAction.ADD_COMMENT:
         this.#moviePresenter.get(movie.id).setViewState(PopupViewState.SAVING);
@@ -97,7 +96,6 @@ export default class MovieListPresenter {
         } catch(err) {
           this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_SAVE);
         }
-        this.#moviesModel.updateMovie(updateType, movie);
         break;
     }
   }
