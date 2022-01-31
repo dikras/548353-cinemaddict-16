@@ -170,12 +170,6 @@ export default class MoviePresenter {
     const currentPosition = this.#popupComponent.element.scrollTop;
 
     switch (state) {
-      case PopupViewState.DEFAULT:
-        this.#popupComponent.updateData({
-          isDeleting: false,
-          isDisabled: false,
-        });
-        break;
       case PopupViewState.SAVING:
         this.#popupComponent.updateData({
           isDisabled: true

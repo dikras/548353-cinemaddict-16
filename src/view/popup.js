@@ -204,6 +204,8 @@ export default class PopupView extends SmarttView {
           emotion: '',
           userComment: '',
         },
+        isDisabled: false,
+        isDeleting: false
       });
       this.element.scrollTo(0, currentPosition);
     });
@@ -322,17 +324,13 @@ export default class PopupView extends SmarttView {
     }, true);
   }
 
-  #setShakeElement = (element, callback) => {
-    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+  shakeCommentInput = (callback) => {
+    const commentInputElement = this.element.querySelector('.film-details__comment-input');
+    commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this.element.style.animation = '';
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  shakeCommentInput = (callback) => {
-    const commentInputElement = this.element.querySelector('.film-details__comment-input');
-    this.#setShakeElement(commentInputElement, callback);
   }
 
   shakeCommentBlock = (callback) => {
