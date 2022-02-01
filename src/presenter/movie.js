@@ -33,7 +33,8 @@ export default class MoviePresenter {
 
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
-    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
+    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION));
+    await this.#commentsModel.init(movie);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
@@ -53,15 +54,13 @@ export default class MoviePresenter {
 
     if (this.#popupComponent) {
       const currentPosition = this.#popupComponent.element.scrollTop;
-      remove(this.#popupComponent);
-      render(bodyElement, this.#popupComponent, RenderPosition.BEFOREEND);
+      this.#closePopup();
+      this.#renderPopup(this.#movie, this.#commentsModel);
       this.#popupComponent.element.scrollTo(0, currentPosition);
-      this.#popupComponent.restoreHandlers();
     }
   }
 
-  #renderPopup = async (movie, commentsModel) => {
-    await this.#commentsModel.init();
+  #renderPopup = (movie, commentsModel) => {
     this.#popupComponent = new PopupView(movie, commentsModel);
 
     bodyElement.appendChild(this.#popupComponent.element);
@@ -85,6 +84,7 @@ export default class MoviePresenter {
 
   #handleCardClick = () => {
     this.#renderPopup(this.#movie, this.#commentsModel);
+    bodyElement.classList.add('hide-overflow');
   }
 
   #closePopup = () => {

@@ -5,10 +5,9 @@ export default class CommentsModel extends AbstractObservable {
   #comments = [];
   #movie = null;
 
-  constructor(apiService, movie) {
+  constructor(apiService) {
     super();
     this.#apiService = apiService;
-    this.#movie = movie;
   }
 
   set comments(comments) {
@@ -19,9 +18,9 @@ export default class CommentsModel extends AbstractObservable {
     return this.#comments;
   }
 
-  init = async () => {
+  init = async (movie) => {
     try {
-      const comments = await this.#apiService.getComments(this.#movie);
+      const comments = await this.#apiService.getComments(movie);
       this.#comments = comments;
     } catch(err) {
       this.#comments = [];

@@ -11,6 +11,7 @@ import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading.js';
 import MoviesCountView from '../view/movies-count.js';
 
+
 export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
