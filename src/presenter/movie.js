@@ -36,8 +36,6 @@ export default class MoviePresenter {
     this.#movieComponent = new MovieCardView(movie);
     this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION));
 
-    await this.#commentsModel.init(movie);
-
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#movieComponent.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
