@@ -3,7 +3,6 @@ import AbstractObservable from '../utils/abstract-observable.js';
 export default class CommentsModel extends AbstractObservable {
   #apiService = null;
   #comments = [];
-  #movie = null;
 
   constructor(apiService) {
     super();

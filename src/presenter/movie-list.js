@@ -16,6 +16,7 @@ export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
+  #commentsModel = null;
   #noMoviesComponent = null;
   #moviesCountComponent = null;
   #movieListComponent = null;
@@ -34,10 +35,11 @@ export default class MovieListPresenter {
   #filterType = FilterType.ALL;
   #isLoading = true;
 
-  constructor(movieListContainer, moviesModel, filterModel) {
+  constructor(movieListContainer, moviesModel, filterModel, commentsModel) {
     this.#movieListContainer = movieListContainer;
     this.#moviesModel = moviesModel;
     this.#filterModel = filterModel;
+    this.#commentsModel = commentsModel;
   }
 
   get movies() {
@@ -145,7 +147,7 @@ export default class MovieListPresenter {
   }
 
   #renderMovie = (movie) => {
-    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange);
+    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange, this.#commentsModel);
     moviePresenter.init(movie);
     this.#moviePresenter.set(movie.id, moviePresenter);
   }

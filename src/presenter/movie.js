@@ -22,10 +22,11 @@ export default class MoviePresenter {
 
   #commentsModel = null;
 
-  constructor(movieListContainer, changeData, changeMode) {
+  constructor(movieListContainer, changeData, changeMode, commentsModel) {
     this.#movieListContainer = movieListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#commentsModel = commentsModel;
   }
 
   init = async (movie) => {
@@ -34,6 +35,7 @@ export default class MoviePresenter {
     const prevMovieComponent = this.#movieComponent;
     this.#movieComponent = new MovieCardView(movie);
     this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION));
+
     await this.#commentsModel.init(movie);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
@@ -55,13 +57,28 @@ export default class MoviePresenter {
     if (this.#popupComponent) {
       const currentPosition = this.#popupComponent.element.scrollTop;
       this.#closePopup();
-      this.#renderPopup(this.#movie, this.#commentsModel);
+      this.#renderPopup();
       this.#popupComponent.element.scrollTo(0, currentPosition);
     }
   }
 
-  #renderPopup = (movie, commentsModel) => {
-    this.#popupComponent = new PopupView(movie, commentsModel);
+  #renderPopup = async () => {
+    const comments = this.#commentsModel.comments;
+    this.#popupComponent = new PopupView(this.#movie, comments);
+
+    this.#commentsModel.addObserver(() => {
+      const currentPosition = this.#popupComponent.element.scrollTop;
+      this.#popupComponent.updateData({
+        comments: this.#commentsModel.comments,
+        newComment: {
+          emotion: '',
+          userComment: '',
+        },
+        isDisabled: false,
+        isDeleting: false
+      });
+      this.#popupComponent.element.scrollTo(0, currentPosition);
+    });
 
     bodyElement.appendChild(this.#popupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);

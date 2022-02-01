@@ -180,15 +180,13 @@ const createPopupTemplate = (data, commentId) => {
 };
 
 export default class PopupView extends SmarttView {
-  #commentsModel;
   #commentId;
 
-  constructor(movie, commentsModel) {
+  constructor(movie, comments) {
     super();
-    this.#commentsModel = commentsModel;
     this._data = {
       film: movie,
-      comments: this.#commentsModel.comments,
+      comments,
       newComment: {
         emotion: '',
         userComment: ''
@@ -196,19 +194,6 @@ export default class PopupView extends SmarttView {
       isDisabled: false,
       isDeleting: false
     };
-    this.#commentsModel.addObserver(() => {
-      const currentPosition = this.element.scrollTop;
-      this.updateData({
-        comments: this.#commentsModel.comments,
-        newComment: {
-          emotion: '',
-          userComment: '',
-        },
-        isDisabled: false,
-        isDeleting: false
-      });
-      this.element.scrollTo(0, currentPosition);
-    });
 
     this.#setInnerHandlers();
   }
