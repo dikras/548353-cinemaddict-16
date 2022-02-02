@@ -44,7 +44,7 @@ export default class MovieListPresenter {
 
   get movies() {
     this.#filterType = this.#filterModel.filter;
-    const movies = this.#moviesModel.movies;
+    const movies = [...this.#moviesModel.movies];
     const filteredMovies = filter[this.#filterType](movies);
 
     switch (this.#currentSortType) {

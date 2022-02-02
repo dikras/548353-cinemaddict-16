@@ -295,11 +295,10 @@ export default class PopupView extends SmarttView {
         comment: this._comment,
         emotion: this._data.newComment.emotion,
       };
-      if (userComment.comment && userComment.emotion) {
-        this._callback.commentAdd(userComment);
-      } else {
+      if ((userComment.comment === null) || (userComment.emotion === null)) {
         this.shakeCommentInput();
       }
+      this._callback.commentAdd(userComment);
     }
   }
 
