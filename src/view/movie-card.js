@@ -1,11 +1,11 @@
 import { getReleaseYear, getMovieDuration } from '../utils/movie.js';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 
 const MAX_DESCRIPTION_LENGTH = 140;
 
-const createMovieCardTemplate = (movie) => {
+const createMovieCardTemplate = (movie, comments) => {
   const {
-    comments,
+    // comments,
     filmInfo: {
       title,
       totalRating,
@@ -50,16 +50,24 @@ const createMovieCardTemplate = (movie) => {
   </article>`;
 };
 
-export default class MovieCardView extends AbstractView {
-  #movie = null;
-
-  constructor(movie) {
+export default class MovieCardView extends SmartView {
+  constructor(movie, comments) {
     super();
-    this.#movie = movie;
+    this._data = {
+      movie,
+      comments
+    };
+  }
+
+  restoreHandlers = () => {
+    this.setCardClickHandler(this._callback.cardClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
   get template() {
-    return createMovieCardTemplate(this.#movie);
+    return createMovieCardTemplate(this._data.movie, this._data.comments);
   }
 
   setCardClickHandler = (callback) => {

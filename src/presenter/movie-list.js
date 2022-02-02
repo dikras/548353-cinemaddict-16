@@ -86,6 +86,7 @@ export default class MovieListPresenter {
         break;
       case UserAction.DELETE_COMMENT:
         this.#moviePresenter.get(movie.id).setViewState(PopupViewState.DELETING);
+        // this.#moviePresenter.get(movie.id).setCommentsCount(PopupViewState.DELETING);
         try {
           await commentsModel.deleteComment(updateType, update);
         } catch(err) {
@@ -94,6 +95,7 @@ export default class MovieListPresenter {
         break;
       case UserAction.ADD_COMMENT:
         this.#moviePresenter.get(movie.id).setViewState(PopupViewState.SAVING);
+        // this.#moviePresenter.get(movie.id).setCommentsCount(PopupViewState.SAVING);
         try {
           await commentsModel.addComment(updateType, update, movie);
         } catch(err) {

@@ -19,6 +19,7 @@ export default class MoviePresenter {
   #mode = Mode.DEFAULT;
 
   #commentsModel = null;
+  #comments = [];
 
   constructor(movieListContainer, changeData, changeMode, commentsModel) {
     this.#movieListContainer = movieListContainer;
@@ -29,9 +30,10 @@ export default class MoviePresenter {
 
   init = (movie) => {
     this.#movie = movie;
+    this.#comments = movie.comments;
 
     const prevMovieComponent = this.#movieComponent;
-    this.#movieComponent = new MovieCardView(movie);
+    this.#movieComponent = new MovieCardView(movie, this.#comments);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
@@ -77,7 +79,10 @@ export default class MoviePresenter {
     this.#changeMode();
     this.#mode = Mode.DETAILS;
 
-    commentsModel.addObserver(this.#updatePopup);
+    this.#commentsModel.addObserver(this.#updatePopup);
+    this.#commentsModel.addObserver(this.#updateMovieCard);
+
+    this.#movieComponent.restoreHandlers();
   }
 
   #updatePopup = () => {
@@ -94,9 +99,22 @@ export default class MoviePresenter {
     this.#popupComponent.element.scrollTo(0, currentPosition);
   }
 
+  #updateMovieCard = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const currentPosition = this.#popupComponent.element.scrollTop;
+    this.#movieComponent.updateData({
+      comments: this.#commentsModel.comments
+    });
+    this.#popupComponent.element.scrollTo(0, currentPosition);
+  }
+
   destroy = () => {
     remove(this.#movieComponent);
     this.#commentsModel.removeObserver(this.#updatePopup);
+    this.#commentsModel.removeObserver(this.#updateMovieCard);
   }
 
   #handleCardClick = () => {
@@ -207,4 +225,24 @@ export default class MoviePresenter {
 
     this.#popupComponent.element.scrollTo(0, currentPosition);
   }
+
+  /* setCommentsCount = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const currentPosition = this.#popupComponent.element.scrollTop;
+
+    switch (state) {
+      case PopupViewState.SAVING:
+      case PopupViewState.DELETING:
+        this.#movieComponent.updateData({
+          comments: this.#commentsModel.comments
+        });
+        this.#movieComponent.restoreHandlers();
+        break;
+    }
+
+    this.#popupComponent.element.scrollTo(0, currentPosition);
+  } */
 }

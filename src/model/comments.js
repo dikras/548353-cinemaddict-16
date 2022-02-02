@@ -50,7 +50,7 @@ export default class CommentsModel extends AbstractObservable {
         ...this.#comments.slice(0, index),
         ...this.#comments.slice(index + 1),
       ];
-      this._notify(updateType);
+      this._notify(updateType, update);
     } catch(err) {
       throw new Error('Can\'t delete comment');
     }
