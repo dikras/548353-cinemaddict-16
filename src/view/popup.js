@@ -295,8 +295,9 @@ export default class PopupView extends SmarttView {
         comment: this._comment,
         emotion: this._data.newComment.emotion,
       };
-      if ((userComment.comment === null) || (userComment.emotion === null)) {
+      if (!userComment.comment || !userComment.emotion) {
         this.shakeCommentInput();
+        return;
       }
       this._callback.commentAdd(userComment);
     }
@@ -315,12 +316,12 @@ export default class PopupView extends SmarttView {
   shakeCommentInput = (callback) => {
     const commentInputElement = this.element.querySelector('.film-details__comment-input');
     commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    if (callback) {
-      setTimeout(() => {
-        this.element.style.animation = '';
+    setTimeout(() => {
+      commentInputElement.style.animation = '';
+      if (callback) {
         callback();
-      }, SHAKE_ANIMATION_TIMEOUT);
-    }
+      }
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   shakeCommentBlock = (callback) => {
