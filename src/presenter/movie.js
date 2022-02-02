@@ -113,11 +113,10 @@ export default class MoviePresenter {
 
   destroy = () => {
     remove(this.#movieComponent);
-    this.#commentsModel.removeObserver(this.#updatePopup);
-    this.#commentsModel.removeObserver(this.#updateMovieCard);
   }
 
   #handleCardClick = () => {
+    this.#changeMode();
     this.#renderPopup(this.#movie, this.#commentsModel);
   }
 
@@ -128,6 +127,9 @@ export default class MoviePresenter {
 
     this.#mode = Mode.DEFAULT;
     this.#popupComponent = null;
+
+    this.#commentsModel.removeObserver(this.#updatePopup);
+    this.#commentsModel.removeObserver(this.#updateMovieCard);
   }
 
   resetView = () => {
@@ -225,24 +227,4 @@ export default class MoviePresenter {
 
     this.#popupComponent.element.scrollTo(0, currentPosition);
   }
-
-  /* setCommentsCount = (state) => {
-    if (this.#mode === Mode.DEFAULT) {
-      return;
-    }
-
-    const currentPosition = this.#popupComponent.element.scrollTop;
-
-    switch (state) {
-      case PopupViewState.SAVING:
-      case PopupViewState.DELETING:
-        this.#movieComponent.updateData({
-          comments: this.#commentsModel.comments
-        });
-        this.#movieComponent.restoreHandlers();
-        break;
-    }
-
-    this.#popupComponent.element.scrollTo(0, currentPosition);
-  } */
 }

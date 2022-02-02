@@ -5,7 +5,6 @@ const MAX_DESCRIPTION_LENGTH = 140;
 
 const createMovieCardTemplate = (movie, comments) => {
   const {
-    // comments,
     filmInfo: {
       title,
       totalRating,
