@@ -9,7 +9,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const createPopupTemplate = (data) => {
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const createPopupTemplate = (data, commentId) => {
   const {
     filmInfo: {
       title,
@@ -129,7 +131,7 @@ const createPopupTemplate = (data) => {
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${comment.author}</span>
                     <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
-                    <button class="film-details__comment-delete ${isDisabled ? 'disabled' : ''}" data-comment-id="${comment.id}">${isDeleting ? 'Deleting...' : 'Delete'}</button>
+                    <button class="film-details__comment-delete" ${isDisabled ? 'disabled' : ''} data-comment-id="${comment.id}">${(comment.id === commentId && isDeleting) ? 'Deleting...' : 'Delete'}</button>
                   </p>
                 </div>
               </li>`
@@ -145,7 +147,8 @@ const createPopupTemplate = (data) => {
               <textarea
                 class="film-details__comment-input"
                 placeholder="Select reaction below and write comment here"
-                name="comment" ${isDisabled ? 'disabled' : ''}>${userComment}</textarea>
+                name="comment"
+                ${isDisabled ? 'disabled' : ''}>${userComment ? userComment : ''}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -177,14 +180,13 @@ const createPopupTemplate = (data) => {
 };
 
 export default class PopupView extends SmarttView {
-  #commentsModel;
+  #commentId;
 
-  constructor(movie, commentsModel) {
+  constructor(movie, comments) {
     super();
-    this.#commentsModel = commentsModel;
     this._data = {
       film: movie,
-      comments: this.#commentsModel.comments,
+      comments,
       newComment: {
         emotion: '',
         userComment: ''
@@ -192,17 +194,6 @@ export default class PopupView extends SmarttView {
       isDisabled: false,
       isDeleting: false
     };
-    this.#commentsModel.addObserver(() => {
-      const currentPosition = this.element.scrollTop;
-      this.updateData({
-        comments: this.#commentsModel.comments,
-        newComment: {
-          emotion: '',
-          userComment: '',
-        }
-      });
-      this.element.scrollTo(0, currentPosition);
-    });
 
     this.#setInnerHandlers();
   }
@@ -217,7 +208,7 @@ export default class PopupView extends SmarttView {
   }
 
   get template() {
-    return createPopupTemplate(this._data);
+    return createPopupTemplate(this._data, this.#commentId);
   }
 
   #setInnerHandlers = () => {
@@ -293,6 +284,7 @@ export default class PopupView extends SmarttView {
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
     const indexComment = this._data.comments.findIndex((comment) => comment.id === evt.target.dataset.commentId);
+    this.#commentId = evt.target.dataset.commentId;
     this._callback.commentDeleteClick(this._data.comments[indexComment]);
   }
 
@@ -303,14 +295,11 @@ export default class PopupView extends SmarttView {
         comment: this._comment,
         emotion: this._data.newComment.emotion,
       };
+      if (!userComment.comment || !userComment.emotion) {
+        this.shakeCommentInput();
+        return;
+      }
       this._callback.commentAdd(userComment);
-      /* this.updateData({
-        comments: this._data.comments,
-        newComment: {
-          emotion: '',
-          userComment: '',
-        }
-      }); */
     }
   }
 
@@ -322,5 +311,27 @@ export default class PopupView extends SmarttView {
         emotion: this._data.newComment.emotion
       }
     }, true);
+  }
+
+  shakeCommentInput = (callback) => {
+    const commentInputElement = this.element.querySelector('.film-details__comment-input');
+    commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      commentInputElement.style.animation = '';
+      if (callback) {
+        callback();
+      }
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeCommentBlock = (callback) => {
+    const commentElements = this.element.querySelectorAll('.film-details__comment');
+    commentElements.forEach((element) => {
+      element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+      setTimeout(() => {
+        element.style.animation = '';
+        callback();
+      }, SHAKE_ANIMATION_TIMEOUT);
+    });
   }
 }

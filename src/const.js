@@ -84,6 +84,9 @@ export const AUTHORIZATION = 'Basic w78NalncokVub9gM';
 export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
 
 export const PopupViewState = {
+  DEFAULT: 'DEFAULT',
   SAVING: 'SAVING',
   DELETING: 'DELETING',
+  ABORTING_DELETE: 'ABORTING_DELETE',
+  ABORTING_SAVE: 'ABORTING_SAVE',
 };

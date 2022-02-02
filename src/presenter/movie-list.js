@@ -4,17 +4,19 @@ import NoMoviesView from '../view/no-movies.js';
 import SortView from '../view/sort.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import MoviePresenter from './movie.js';
-import { MovieCount, SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { MovieCount, SortType, UpdateType, UserAction, FilterType, PopupViewState } from '../const.js';
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading.js';
 import MoviesCountView from '../view/movies-count.js';
 
+
 export default class MovieListPresenter {
   #movieListContainer = null;
   #moviesModel = null;
   #filterModel = null;
+  #commentsModel = null;
   #noMoviesComponent = null;
   #moviesCountComponent = null;
   #movieListComponent = null;
@@ -33,15 +35,16 @@ export default class MovieListPresenter {
   #filterType = FilterType.ALL;
   #isLoading = true;
 
-  constructor(movieListContainer, moviesModel, filterModel) {
+  constructor(movieListContainer, moviesModel, filterModel, commentsModel) {
     this.#movieListContainer = movieListContainer;
     this.#moviesModel = moviesModel;
     this.#filterModel = filterModel;
+    this.#commentsModel = commentsModel;
   }
 
   get movies() {
     this.#filterType = this.#filterModel.filter;
-    const movies = this.#moviesModel.movies;
+    const movies = [...this.#moviesModel.movies];
     const filteredMovies = filter[this.#filterType](movies);
 
     switch (this.#currentSortType) {
@@ -82,19 +85,19 @@ export default class MovieListPresenter {
         this.#moviesModel.updateMovie(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        // this.#moviePresenter.setViewState(PopupViewState.DELETING);
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.DELETING);
         try {
           await commentsModel.deleteComment(updateType, update);
         } catch(err) {
-          throw new Error('Can\'t delete comment');
+          this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_DELETE);
         }
         break;
       case UserAction.ADD_COMMENT:
-        // this.#moviePresenter.setViewState(PopupViewState.SAVING);
+        this.#moviePresenter.get(movie.id).setViewState(PopupViewState.SAVING);
         try {
           await commentsModel.addComment(updateType, update, movie);
         } catch(err) {
-          throw new Error('Can\'t add comment');
+          this.#moviePresenter.get(movie.id).setViewState(PopupViewState.ABORTING_SAVE);
         }
         break;
     }
@@ -144,7 +147,7 @@ export default class MovieListPresenter {
   }
 
   #renderMovie = (movie) => {
-    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange);
+    const moviePresenter = new MoviePresenter(this.#movieListContainerComponent.element, this.#handleViewAction, this.#handleModeChange, this.#commentsModel);
     moviePresenter.init(movie);
     this.#moviePresenter.set(movie.id, moviePresenter);
   }

@@ -1,10 +1,8 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
-import { Mode, AUTHORIZATION, END_POINT } from '../const.js';
+import { Mode } from '../const.js';
 import { UserAction, UpdateType, PopupViewState } from '../const.js';
-import CommentsModel from '../model/comments.js';
-import ApiService from '../api-service.js';
 
 const bodyElement = document.body;
 
@@ -21,19 +19,21 @@ export default class MoviePresenter {
   #mode = Mode.DEFAULT;
 
   #commentsModel = null;
+  #comments = [];
 
-  constructor(movieListContainer, changeData, changeMode) {
+  constructor(movieListContainer, changeData, changeMode, commentsModel) {
     this.#movieListContainer = movieListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#commentsModel = commentsModel;
   }
 
-  init = async (movie) => {
+  init = (movie) => {
     this.#movie = movie;
+    this.#comments = movie.comments;
 
     const prevMovieComponent = this.#movieComponent;
-    this.#movieComponent = new MovieCardView(movie);
-    this.#commentsModel = new CommentsModel(new ApiService(END_POINT, AUTHORIZATION), movie);
+    this.#movieComponent = new MovieCardView(movie, this.#comments);
 
     this.#movieComponent.setCardClickHandler(this.#handleCardClick);
     this.#movieComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
@@ -61,8 +61,9 @@ export default class MoviePresenter {
   }
 
   #renderPopup = async (movie, commentsModel) => {
-    await this.#commentsModel.init();
-    this.#popupComponent = new PopupView(movie, commentsModel);
+    await commentsModel.init(movie);
+    const comments = commentsModel.comments;
+    this.#popupComponent = new PopupView(movie, comments);
 
     bodyElement.appendChild(this.#popupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -77,6 +78,37 @@ export default class MoviePresenter {
 
     this.#changeMode();
     this.#mode = Mode.DETAILS;
+
+    this.#commentsModel.addObserver(this.#updatePopup);
+    this.#commentsModel.addObserver(this.#updateMovieCard);
+
+    this.#movieComponent.restoreHandlers();
+  }
+
+  #updatePopup = () => {
+    const currentPosition = this.#popupComponent.element.scrollTop;
+    this.#popupComponent.updateData({
+      comments: this.#commentsModel.comments,
+      newComment: {
+        emotion: '',
+        userComment: '',
+      },
+      isDisabled: false,
+      isDeleting: false
+    });
+    this.#popupComponent.element.scrollTo(0, currentPosition);
+  }
+
+  #updateMovieCard = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const currentPosition = this.#popupComponent.element.scrollTop;
+    this.#movieComponent.updateData({
+      comments: this.#commentsModel.comments
+    });
+    this.#popupComponent.element.scrollTo(0, currentPosition);
   }
 
   destroy = () => {
@@ -84,6 +116,7 @@ export default class MoviePresenter {
   }
 
   #handleCardClick = () => {
+    this.#changeMode();
     this.#renderPopup(this.#movie, this.#commentsModel);
   }
 
@@ -94,6 +127,9 @@ export default class MoviePresenter {
 
     this.#mode = Mode.DEFAULT;
     this.#popupComponent = null;
+
+    this.#commentsModel.removeObserver(this.#updatePopup);
+    this.#commentsModel.removeObserver(this.#updateMovieCard);
   }
 
   resetView = () => {
@@ -141,7 +177,7 @@ export default class MoviePresenter {
       UserAction.DELETE_COMMENT,
       UpdateType.MINOR,
       comment,
-      '',
+      this.#movie,
       this.#commentsModel
     );
   }
@@ -156,10 +192,18 @@ export default class MoviePresenter {
     );
   }
 
+  #removeDisabledState = () => {
+    this.#popupComponent.updateData({
+      isDisabled: false,
+    });
+  }
+
   setViewState = (state) => {
     if (this.#mode === Mode.DEFAULT) {
       return;
     }
+
+    const currentPosition = this.#popupComponent.element.scrollTop;
 
     switch (state) {
       case PopupViewState.SAVING:
@@ -173,6 +217,14 @@ export default class MoviePresenter {
           isDeleting: true,
         });
         break;
+      case PopupViewState.ABORTING_SAVE:
+        this.#popupComponent.shakeCommentInput(this.#removeDisabledState);
+        break;
+      case PopupViewState.ABORTING_DELETE:
+        this.#popupComponent.shakeCommentBlock(this.#removeDisabledState);
+        break;
     }
+
+    this.#popupComponent.element.scrollTo(0, currentPosition);
   }
 }
