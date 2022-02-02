@@ -8,13 +8,13 @@ export const MovieCount = {
 
 export const CommentsCount = {
   MIN: 0,
-  MAX: 5
+  MAX: 5,
 };
 
 export const KeyEvent = {
   ESC_IE: 'Esc',
   ESC_ALL_BROWSERS: 'Escape',
-  ENTER: 'Enter'
+  ENTER: 'Enter',
 };
 
 export const Mode = {
@@ -46,7 +46,7 @@ export const FilterType = {
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',
-  STATISTICS: 'statistics'
+  STATISTICS: 'statistics',
 };
 
 export const UserRank = {
