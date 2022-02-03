@@ -1,5 +1,5 @@
-import MovieCardView from '../view/movie-card.js';
-import PopupView from '../view/popup.js';
+import MovieCardView from '../view/movie-card-view.js';
+import PopupView from '../view/popup-view.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import { Mode } from '../const.js';
 import { UserAction, UpdateType, PopupViewState } from '../const.js';

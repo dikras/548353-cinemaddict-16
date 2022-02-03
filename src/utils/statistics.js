@@ -23,7 +23,7 @@ export const getUserRank = (movies) => {
   return '';
 };
 
-export const getWatсhedMoviesInRange = (movies, dateFrom, dateTo, currentDate) =>
+export const getWatchedMoviesInRange = (movies, dateFrom, dateTo, currentDate) =>
   movies.reduce((moviesInRange, movie) => {
     if (currentDate === PeriodType.ALL) {
       moviesInRange.push(movie);

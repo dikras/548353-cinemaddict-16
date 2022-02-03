@@ -1,5 +1,5 @@
 import { getReleaseYear, getMovieDuration } from '../utils/movie.js';
-import SmartView from './smart.js';
+import Smart from './smart.js';
 
 const MAX_DESCRIPTION_LENGTH = 140;
 
@@ -49,7 +49,7 @@ const createMovieCardTemplate = (movie, comments) => {
   </article>`;
 };
 
-export default class MovieCardView extends SmartView {
+export default class MovieCardView extends Smart {
   constructor(movie, comments) {
     super();
     this._data = {

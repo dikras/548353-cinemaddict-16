@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import Abstract from './abstract.js';
 import { FilterType } from '../const.js';
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
@@ -17,7 +17,7 @@ const createFilterTemplate = (filterItems, currentFilterType) => {
           </nav>`;
 };
 
-export default class FilterView extends AbstractView {
+export default class FilterView extends Abstract {
   #filters = null;
   #currentFilter = null;
 

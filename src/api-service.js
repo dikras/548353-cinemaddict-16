@@ -32,9 +32,7 @@ export default class ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
+    return await ApiService.parseResponse(response);
   }
 
   addComment = async (comment, movie) => {
@@ -45,19 +43,13 @@ export default class ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
+    return await ApiService.parseResponse(response);
   }
 
-  deleteComment = async (comment) => {
-    const response = await this.#load({
+  deleteComment = async (comment) => await this.#load({
       url: `comments/${comment.id}`,
       method: Method.DELETE,
     });
-
-    return response;
-  }
 
   #load = async ({
     url,

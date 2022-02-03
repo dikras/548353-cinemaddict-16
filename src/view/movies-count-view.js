@@ -1,11 +1,11 @@
-import AbstractView from './abstract.js';
+import Abstract from './abstract.js';
 
 const createMoviesCountTemplate = (movies) => (
   `<p>${movies.length} movies inside</p>
   `
 );
 
-export default class MoviesCountView extends AbstractView {
+export default class MoviesCountView extends Abstract {
   #movies = null;
 
   constructor(movies) {

@@ -1,8 +1,8 @@
-import FilterView from '../view/filter.js';
+import FilterView from '../view/filter-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {filter} from '../utils/filter.js';
 import {FilterType, UpdateType} from '../const.js';
-import StatisticsView from '../view/statistics.js';
+import StatisticsView from '../view/statistics-view.js';
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -12,8 +12,6 @@ export default class FilterPresenter {
 
   #filterComponent = null;
   #statisticsComponent = null;
-
-  #navLinkType = null;
 
   constructor(filterContainer, filterModel, moviesModel, movieListPresenter) {
     this.#filterContainer = filterContainer;

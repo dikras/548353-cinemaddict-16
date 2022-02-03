@@ -20,5 +20,3 @@ export const getMovieDuration = (runtime) => {
 export const sortByRating = (movieA, movieB) => movieB.filmInfo.totalRating - movieA.filmInfo.totalRating;
 
 export const sortByDate = (movieA, movieB) => dayjs(movieB.filmInfo.release.date).diff(dayjs(movieA.filmInfo.release.date));
-
-// export const getWatchedMoviesCount = (movies) => movies.reduce((total, movie) => total + movie.userDetails.alreadyWatched, 0);

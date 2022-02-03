@@ -1,4 +1,4 @@
-import AbstractView from '../view/abstract';
+import Abstract from '../view/abstract.js';
 
 export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
@@ -8,8 +8,8 @@ export const RenderPosition = {
 };
 
 export const render = (container, element, place) => {
-  const parent = container instanceof AbstractView ? container.element : container;
-  const child = element instanceof AbstractView ? element.element : element;
+  const parent = container instanceof Abstract ? container.element : container;
+  const child = element instanceof Abstract ? element.element : element;
 
   switch (place) {
     case RenderPosition.BEFOREBEGIN:
@@ -39,8 +39,8 @@ export const replace = (newElement, oldElement) => {
     throw new Error('Can\'t replace unexisting elements');
   }
 
-  const newChild = newElement instanceof AbstractView ? newElement.element : newElement;
-  const oldChild = oldElement instanceof AbstractView ? oldElement.element : oldElement;
+  const newChild = newElement instanceof Abstract ? newElement.element : newElement;
+  const oldChild = oldElement instanceof Abstract ? oldElement.element : oldElement;
 
   const parent = oldChild.parentElement;
 
@@ -57,7 +57,7 @@ export const remove = (component) => {
     return;
   }
 
-  if (!(component instanceof AbstractView)) {
+  if (!(component instanceof Abstract)) {
     throw new Error('Can remove only components');
   }
 

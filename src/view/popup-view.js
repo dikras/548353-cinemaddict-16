@@ -1,5 +1,5 @@
 import { getReleaseDate, getMovieDuration } from '../utils/movie.js';
-import SmarttView from './smart.js';
+import Smart from './smart.js';
 import { KeyEvent } from '../const.js';
 
 import he from 'he';
@@ -10,6 +10,7 @@ dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const MILLISECONDS_PER_SECOND = 1000;
 
 const createPopupTemplate = (data, commentId) => {
   const {
@@ -179,7 +180,7 @@ const createPopupTemplate = (data, commentId) => {
   </section>`;
 };
 
-export default class PopupView extends SmarttView {
+export default class PopupView extends Smart {
   #commentId;
 
   constructor(movie, comments) {
@@ -315,7 +316,7 @@ export default class PopupView extends SmarttView {
 
   shakeCommentInput = (callback) => {
     const commentInputElement = this.element.querySelector('.film-details__comment-input');
-    commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    commentInputElement.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / MILLISECONDS_PER_SECOND}s`;
     setTimeout(() => {
       commentInputElement.style.animation = '';
       if (callback) {
@@ -327,7 +328,7 @@ export default class PopupView extends SmarttView {
   shakeCommentBlock = (callback) => {
     const commentElements = this.element.querySelectorAll('.film-details__comment');
     commentElements.forEach((element) => {
-      element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+      element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / MILLISECONDS_PER_SECOND}s`;
       setTimeout(() => {
         element.style.animation = '';
         callback();

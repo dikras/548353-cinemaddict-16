@@ -1,11 +1,11 @@
 import { AUTHORIZATION, END_POINT } from './const.js';
-import MovieListPresenter from './presenter/movie-list.js';
-import FilterPresenter from './presenter/filter.js';
-import MoviesModel from './model/movies.js';
-import FilterModel from './model/filter.js';
-import UserRankPresenter from './presenter/user-rank.js';
+import MovieListPresenter from './presenter/movie-list-presenter.js';
+import FilterPresenter from './presenter/filter-presenter.js';
+import MoviesModel from './model/movies-model.js';
+import FilterModel from './model/filter-model.js';
+import UserRankPresenter from './presenter/user-rank-presenter.js';
 import ApiService from './api-service.js';
-import CommentsModel from './model/comments.js';
+import CommentsModel from './model/comments-model.js';
 
 const headerElement = document.querySelector('.header');
 const mainElement = document.querySelector('.main');

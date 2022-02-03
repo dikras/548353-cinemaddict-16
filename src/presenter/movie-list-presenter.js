@@ -1,15 +1,15 @@
-import MovieListView from '../view/movie-list.js';
-import MovieListContainerView from '../view/movie-list-container.js';
-import NoMoviesView from '../view/no-movies.js';
-import SortView from '../view/sort.js';
-import ShowMoreButtonView from '../view/show-more-button.js';
-import MoviePresenter from './movie.js';
+import MovieListView from '../view/movie-list-view.js';
+import MovieListContainerView from '../view/movie-list-container-view.js';
+import NoMoviesView from '../view/no-movies-view.js';
+import SortView from '../view/sort-view.js';
+import ShowMoreButtonView from '../view/show-more-button-view.js';
+import MoviePresenter from './movie-presenter.js';
 import { MovieCount, SortType, UpdateType, UserAction, FilterType, PopupViewState } from '../const.js';
 import { RenderPosition, render, remove } from '../utils/render.js';
 import { sortByDate, sortByRating } from '../utils/movie.js';
 import { filter } from '../utils/filter.js';
-import LoadingView from '../view/loading.js';
-import MoviesCountView from '../view/movies-count.js';
+import LoadingView from '../view/loading-view.js';
+import MoviesCountView from '../view/movies-count-view.js';
 
 
 export default class MovieListPresenter {

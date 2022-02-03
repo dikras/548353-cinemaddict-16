@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import Abstract from './abstract.js';
 import { FilterType } from '../const.js';
 
 const NoMoviesTextType = {
@@ -15,7 +15,7 @@ const createNoMoviesTemplate = (filterType) => {
   );
 };
 
-export default class NoMoviesView extends AbstractView {
+export default class NoMoviesView extends Abstract {
   constructor(data) {
     super();
     this._data = data;

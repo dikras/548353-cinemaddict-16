@@ -1,15 +1,15 @@
 import dayjs from 'dayjs';
-import SmartView from './smart.js';
+import Smart from './smart.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { filter } from '../utils/filter.js';
 import { FilterType, DurationType, PeriodType } from '../const.js';
-import { getGenres, getDateFrom, getUserRank, getDuration, getCountGenres, getTopGenre, getWatсhedMoviesInRange, getSortGenreKeys, getSortGenreValues } from '../utils/statistics.js';
+import { getGenres, getDateFrom, getUserRank, getDuration, getCountGenres, getTopGenre, getWatchedMoviesInRange, getSortGenreKeys, getSortGenreValues } from '../utils/statistics.js';
 
 const CANVAS_HEIGHT = 50;
 
 const renderChart = (statisticCtx, { movies, dateFrom, dateTo, target }) => {
-  const rangedMovies = getWatсhedMoviesInRange(movies, dateFrom, dateTo, target);
+  const rangedMovies = getWatchedMoviesInRange(movies, dateFrom, dateTo, target);
   const allGenres = getGenres(rangedMovies);
 
   if (allGenres.length === 0) {
@@ -76,7 +76,7 @@ const renderChart = (statisticCtx, { movies, dateFrom, dateTo, target }) => {
 };
 
 const createStatisticsTemplate = ({movies, dateFrom, dateTo, target}) => {
-  const rangedMovies = getWatсhedMoviesInRange(movies, dateFrom, dateTo, target);
+  const rangedMovies = getWatchedMoviesInRange(movies, dateFrom, dateTo, target);
   const allGenres = getGenres(rangedMovies);
   const countGenres = getCountGenres(allGenres);
 
@@ -126,7 +126,7 @@ const createStatisticsTemplate = ({movies, dateFrom, dateTo, target}) => {
 </section>`);
 };
 
-export default class StatisticsView extends SmartView {
+export default class StatisticsView extends Smart {
   #watchedMovies = null;
 
   constructor (movies) {

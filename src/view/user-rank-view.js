@@ -1,4 +1,4 @@
-import SmartView from './smart.js';
+import Smart from './smart.js';
 import { getUserRank } from '../utils/statistics.js';
 
 const createUserRankTemplate = (movies) => (
@@ -8,7 +8,7 @@ const createUserRankTemplate = (movies) => (
   </section>`
 );
 
-export default class UserRankView extends SmartView {
+export default class UserRankView extends Smart {
   #movies = null;
 
   constructor(movies) {

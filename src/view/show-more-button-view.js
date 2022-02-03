@@ -1,11 +1,11 @@
-import AbstractView from './abstract.js';
+import Abstract from './abstract.js';
 
 const createShowMoreButtonTemplate = () => (
   `<button class="films-list__show-more">Show more</button>
   `
 );
 
-export default class ShowMoreButtonView extends AbstractView {
+export default class ShowMoreButtonView extends Abstract {
   get template() {
     return createShowMoreButtonTemplate();
   }

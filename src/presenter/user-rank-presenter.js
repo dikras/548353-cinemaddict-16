@@ -1,4 +1,4 @@
-import UserRankView from '../view/user-rank.js';
+import UserRankView from '../view/user-rank-view.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 
 export default class UserRankPresenter {

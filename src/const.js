@@ -1,14 +1,5 @@
-export const authors = ['Ilya O\'Reilly', 'John Lennon', 'Ringo Starr', 'Paul McCartney', 'George Harrison', 'Peter Gabriel', 'Phil Collins', 'Tim Macoveev', 'John Doe'];
-
-export const userCommentDates = ['2022-01-17T16:12:32.554Z', '2022-01-16T16:12:32.554Z', '2022-01-07T16:12:32.554Z', '2021-12-31T16:12:32.554Z'];
-
 export const MovieCount = {
   PER_STEP: 5,
-};
-
-export const CommentsCount = {
-  MIN: 0,
-  MAX: 5,
 };
 
 export const KeyEvent = {

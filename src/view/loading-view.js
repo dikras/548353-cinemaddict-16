@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import Abstract from './abstract.js';
 
 const createNoMoviesTemplate = () => (
   `<h2 class="films-list__title">
@@ -6,7 +6,7 @@ const createNoMoviesTemplate = () => (
   </h2>`
 );
 
-export default class LoadingView extends AbstractView {
+export default class LoadingView extends Abstract {
   get template() {
     return createNoMoviesTemplate();
   }
