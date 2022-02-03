@@ -47,9 +47,9 @@ export default class ApiService {
   }
 
   deleteComment = async (comment) => await this.#load({
-      url: `comments/${comment.id}`,
-      method: Method.DELETE,
-    });
+    url: `comments/${comment.id}`,
+    method: Method.DELETE,
+  });
 
   #load = async ({
     url,
